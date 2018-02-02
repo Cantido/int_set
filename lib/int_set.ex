@@ -6,6 +6,8 @@ defmodule IntSet do
 
   defstruct s: <<>>
 
+  @opaque t :: %__MODULE__{s: bitstring}
+
   defguardp is_index(i)
     when is_integer(i)
      and i >= 0
@@ -24,6 +26,7 @@ defmodule IntSet do
       #IntSet<[]>
 
   """
+  @spec new :: t
   def new do
     %IntSet{}
   end
@@ -59,6 +62,7 @@ defmodule IntSet do
       #IntSet<[]>
 
   """
+  @spec new(non_neg_integer | Enum.t() | bitstring) :: t
   def new(members)
 
   def new(bitstring) when is_bitstring(bitstring) do
@@ -84,6 +88,7 @@ defmodule IntSet do
       #IntSet<[4, 7]>
 
   """
+  @spec union(t, t) :: t
   def union(x, y)
 
   def union(
@@ -109,6 +114,7 @@ defmodule IntSet do
       #IntSet<[0]>
 
   """
+  @spec put(t, non_neg_integer) :: t
   def put(s, x)
 
   def put(%IntSet{s: s} = set, x) when is_index(x) and is_bitstring(s) do
@@ -126,6 +132,9 @@ defmodule IntSet do
       #IntSet<[]>
 
   """
+  @spec delete(t, non_neg_integer) :: t
+  def delete(set, x)
+
   def delete(%IntSet{s: s} = set, x) when is_index(x) and is_bitstring(s) and not can_contain(s, x) do
     set
   end
@@ -134,11 +143,16 @@ defmodule IntSet do
     set_bit(set, x, 0)
   end
 
+  @spec set_bit(t, non_neg_integer, 0 | 1) :: t
   defp set_bit(%IntSet{} = set, i, x) when x in 0..1 do
     %IntSet{s: s} = ensure_capacity_for(set, i)
     <<pre :: size(i), _ :: 1, post :: bitstring>> = s
     %IntSet{s: <<pre :: size(i), x :: 1, post :: bitstring>>}
   end
+
+
+  @spec ensure_capacity_for(t, non_neg_integer) :: t
+  defp ensure_capacity_for(s, x)
 
   defp ensure_capacity_for(%IntSet{s: s} = set, x) when can_contain(s, x) do
     set

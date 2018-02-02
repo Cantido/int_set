@@ -11,7 +11,7 @@ defmodule IntSet.MixProject do
       package: package(),
       deps: deps(),
       source_url: "https://github.com/Cantido/int_set",
-      dialyzer: [ flags: ["-Wunmatched_returns", :error_handling, :race_conditions, :underspecs]]
+      dialyzer: [ flags: ["-Wunmatched_returns", :error_handling, :race_conditions]]
     ]
   end
 
