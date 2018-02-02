@@ -132,4 +132,11 @@ defmodule IntSetTest do
     IO.puts "MapSet took #{mapset_insert} usec to insert a number"
 
   end
+
+  # TODO: uncomment this and get it passing.
+  # test "inspection renders all ints as integers and not characters" do
+  #   set = IntSet.new(7)
+  #
+  #   assert inspect(set) == "#IntSet<[7]>"
+  # end
 end
