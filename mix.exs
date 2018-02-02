@@ -23,6 +23,7 @@ defmodule IntSet.MixProject do
 
   defp deps do
     [
+      {:stream_data, "~> 0.1", only: :test},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
     ]

@@ -1,5 +1,6 @@
 defmodule IntSetTest do
   use ExUnit.Case
+  use ExUnitProperties
   alias IntSet
   doctest IntSet
 
@@ -85,5 +86,17 @@ defmodule IntSetTest do
     set = IntSet.new([1, 2, 3])
 
     assert inspect(set) == "#IntSet<[1, 2, 3]>"
+  end
+
+  property "can accept arbitrary bitstrings" do
+    check all str <- bitstring() do
+      IntSet.new(str)
+    end
+  end
+
+  property "can accept arbitrary lists of positive integers" do
+    check all list <- list_of(positive_integer()) do
+      IntSet.new(list)
+    end
   end
 end
