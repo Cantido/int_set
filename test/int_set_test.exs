@@ -99,4 +99,37 @@ defmodule IntSetTest do
       IntSet.new(list)
     end
   end
+
+  test "time performance" do
+    # any integer values much bigger than this inconsitently fail. Not sure why, yet.
+    int_max = 10000000
+    capacity = 1000
+
+    ints = Stream.repeatedly(fn -> :rand.uniform(int_max) end)
+        |> Stream.take(capacity)
+        |> Enum.to_list()
+
+    IO.puts ""
+    IO.puts "Performance tests:"
+
+    {intset_time, intset} = :timer.tc(fn -> IntSet.new(ints) end)
+    {mapset_time, mapset} = :timer.tc(fn -> MapSet.new(ints) end)
+    IO.puts "~~Filling~~"
+    IO.puts "IntSet took #{intset_time} usec to fill"
+    IO.puts "MapSet took #{mapset_time} usec to fill"
+
+    {intset_lookups, _} = :timer.tc(fn -> Enum.member?(intset, 10000) end)
+    {mapset_lookups, _} = :timer.tc(fn -> Enum.member?(mapset, 10000) end)
+    IO.puts "~~Lookup~~"
+    IO.puts "IntSet took #{intset_lookups} usec to look up a number"
+    IO.puts "MapSet took #{mapset_lookups} usec to look up a number"
+
+
+    {intset_insert, _} = :timer.tc(fn -> IntSet.put(intset, 10000) end)
+    {mapset_insert, _} = :timer.tc(fn -> MapSet.put(mapset, 10000) end)
+    IO.puts "~~Insertion~~"
+    IO.puts "IntSet took #{intset_insert} usec to insert a number"
+    IO.puts "MapSet took #{mapset_insert} usec to insert a number"
+
+  end
 end
