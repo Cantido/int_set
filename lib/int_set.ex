@@ -2,6 +2,30 @@ defmodule IntSet do
   use Bitwise
   @moduledoc """
   Efficiently store and index a set of non-negative integers.
+
+  A set can be constructed using `IntSet.new/0`:
+
+      iex> IntSet.new
+      #IntSet<[]>
+
+  An `IntSet` obeys the same set semantics as `MapSet`, and provides
+  constant-time operations for insertion, deletion, and membership checking.
+  Use `Enum.member?/2` to check for membership.
+
+      iex> IntSet.new(3) |> Enum.member?(3)
+      true
+
+  Sets also implement `Collectable`, so it can collect values in any context
+  that a list can:
+
+      iex> Enum.into([1, 2, 3], IntSet.new())
+      #IntSet<[1, 2, 3]>
+
+  The `inspect/1` implementation for `IntSet` sorts the members, which makes
+  it way easier to write doctests:
+
+      iex> IntSet.new([3, 1, 2])
+      #IntSet<[1, 2, 3]>
   """
 
   defstruct s: <<>>
