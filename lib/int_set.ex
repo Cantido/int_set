@@ -188,6 +188,26 @@ defmodule IntSet do
     %IntSet{s: <<s :: bitstring, 0 :: size(bits_to_add)>>}
   end
 
+  @doc """
+  Get a bitstring representing the members of a set.
+
+  ## Examples
+
+      iex> IntSet.new(0) |> IntSet.bitstring()
+      <<1::1>>
+
+      iex> IntSet.new(5) |> IntSet.bitstring()
+      <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1>>
+
+      iex> IntSet.new() |> IntSet.bitstring()
+      <<>>
+
+  """
+  @spec bitstring(t) :: bitstring
+  def bitstring(%IntSet{s: s}) do
+    s
+  end
+
   defimpl Inspect do
     import Inspect.Algebra
 
