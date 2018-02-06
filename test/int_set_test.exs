@@ -81,6 +81,14 @@ defmodule IntSetTest do
   end
 
   describe "IntSet.difference/2" do
+    property "removes a member from the list" do
+      check all minuend <- list_of(positive_integer(), max_tries: 100),
+                int <- positive_integer(),
+                max_runs: 1000 do
+        subtrahend = IntSet.new(int)
+        refute IntSet.new(minuend) |> IntSet.difference(subtrahend) |> Enum.member?(int)
+      end
+    end
 
     test "removes a member from the list" do
       subtrahend = IntSet.new(4)
@@ -90,64 +98,6 @@ defmodule IntSetTest do
     test "Removing from an empty set is fine" do
       subtrahend = IntSet.new(8)
       refute IntSet.new() |> IntSet.difference(subtrahend) |> Enum.member?(8)
-    end
-
-    test "boundary test; [0] - [0]" do
-      minuend = IntSet.new([0])
-      subtrahend = IntSet.new([0])
-      refute IntSet.difference(minuend, subtrahend) |> Enum.member?(0)
-    end
-    #
-    # test "boundary test; [0] - [1]" do
-    #   minuend = IntSet.new([0])
-    #   subtrahend = IntSet.new([1])
-    #   diff =  IntSet.difference(minuend, subtrahend)
-    # end
-
-
-    # test "boundary test; [1] - [0]" do
-    #   minuend = IntSet.new([1])
-    #   subtrahend = IntSet.new([0])
-    #   refute IntSet.difference(minuend, subtrahend) |> Enum.member?(1)
-    # end
-
-    # test "boundary test; [1, 2] - [2, 3, 4]" do
-    #   subtrahend = IntSet.new([2, 3, 4])
-    #   diff = IntSet.new([1, 2]) |> IntSet.difference(subtrahend)
-    #
-    #   assert Enum.to_list(diff) == [1]
-    # end
-
-    test "boundary test; [1] - [2]" do
-      subtrahend = IntSet.new([2])
-      diff = IntSet.new([1]) |> IntSet.difference(subtrahend)
-
-      assert Enum.to_list(diff) == [1]
-    end
-    #
-    # test "boundary test; 1 - 7" do
-    #   subtrahend = IntSet.new(7)
-    #   refute IntSet.new(1) |> IntSet.difference(subtrahend) |> Enum.member?(7)
-    # end
-
-    # property "removes a member from the list" do
-    #   check all member <- positive_integer() do
-    #     min = IntSet.new(member)
-    #     sub = IntSet.new(member)
-    #     diff = IntSet.difference(min, sub)
-    #
-    #     refute Enum.member?(diff, member)
-    #     assert Enum.count(min) - 1 == Enum.count(diff)
-    #   end
-    # end
-
-    property "removes a member from the list" do
-      check all minuend <- list_of(positive_integer(), max_tries: 100),
-                int <- positive_integer(),
-                max_runs: 1000 do
-        subtrahend = IntSet.new(int)
-        refute IntSet.new(minuend) |> IntSet.difference(subtrahend) |> Enum.member?(int)
-      end
     end
   end
 
