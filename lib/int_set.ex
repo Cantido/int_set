@@ -98,7 +98,18 @@ defmodule IntSet do
   end
 
   def new(enum) do
-    Enum.into(enum, IntSet.new())
+    list = enum |> Enum.sort() |> Enum.uniq()
+    %IntSet{s: seqput(<<>>, list)}
+  end
+
+  defp seqput(bits, []) when is_bitstring(bits) do
+    bits
+  end
+
+  defp seqput(bits, [next | rest]) when is_bitstring(bits) and is_integer(next) and bit_size(bits) <= next do
+    pad_bits = next - bit_size(bits)
+    new_bits = <<bits::bitstring, 0::size(pad_bits), 1::1>>
+    seqput(new_bits, rest)
   end
 
   @doc """
