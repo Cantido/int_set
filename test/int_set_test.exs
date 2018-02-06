@@ -184,6 +184,16 @@ defmodule IntSetTest do
         end)
       end
     end
+
+    test "doesn't clobber existing values" do
+      initial = IntSet.new(0)
+      actual = Enum.into([1, 2, 3], initial)
+
+      assert Enum.member?(actual, 0)
+      assert Enum.member?(actual, 1)
+      assert Enum.member?(actual, 2)
+      assert Enum.member?(actual, 3)
+    end
   end
 
   describe "Enum.count/1" do
