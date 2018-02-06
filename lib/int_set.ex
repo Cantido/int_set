@@ -148,6 +148,7 @@ defmodule IntSet do
       #IntSet<[1]>
 
   """
+  @spec difference(t, t) :: t
   def difference(int_set1, int_set2)
 
   def difference(%IntSet{s: a}, %IntSet{s: b}) do
