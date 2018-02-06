@@ -183,6 +183,21 @@ defmodule IntSet do
     end
   end
 
+
+  @doc """
+  Checks if int_set1 and int_set2 have no members in common.
+
+  ## Examples
+
+      iex> IntSet.disjoint?(IntSet.new([1, 2]), IntSet.new([3, 4]))
+      true
+
+      iex> IntSet.disjoint?(IntSet.new([1, 2]), IntSet.new([2, 3]))
+      false
+  """
+  @spec disjoint?(t, t) :: boolean
+  def disjoint?(int_set1, int_set2)
+
   def disjoint?(%IntSet{s: <<>>}, %IntSet{s: _}), do: true
   def disjoint?(%IntSet{s: _}, %IntSet{s: <<>>}), do: true
 
