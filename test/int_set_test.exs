@@ -101,6 +101,34 @@ defmodule IntSetTest do
     end
   end
 
+
+  describe "IntSet.disjoint?/2" do
+    property "a set is never disjoint from itself" do
+      check all ints <- nonempty(list_of(positive_integer(), max_tries: 100)),
+                set = IntSet.new(ints) do
+        refute IntSet.disjoint?(set, set)
+      end
+    end
+
+    property "adjacent integers are disjoint" do
+      check all a <- positive_integer(),
+                b = a + 1 do
+        as = IntSet.new(a)
+        bs = IntSet.new(b)
+        assert IntSet.disjoint?(as, bs)
+      end
+    end
+
+    property "an empty set is disjoint from any other set" do
+      check all ints <- list_of(positive_integer(), max_tries: 100),
+                set = IntSet.new(ints) do
+        empty = IntSet.new()
+        assert IntSet.disjoint?(set, empty)
+        assert IntSet.disjoint?(empty, set)
+      end
+    end
+  end
+
   describe "IntSet.bitstring/1" do
     property "returns an equal bitstring to that which created it" do
       check all int <- positive_integer() do

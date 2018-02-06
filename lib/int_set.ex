@@ -158,8 +158,9 @@ defmodule IntSet do
     band(a, bnot(b))
   end
 
-  @bitwise_chunk_bytes 1
-  @bitwise_chunk_bits @bitwise_chunk_bytes * 8
+  defp bitwise_bits(fun, <<>>, <<>>) do
+    <<fun.(0, 0)::8>>
+  end
 
   defp bitwise_bits(fun, a, b) do
     # IO.puts "bitwise op on byte-lengths of #{byte_size(a)} and #{byte_size(b)}"
@@ -179,6 +180,16 @@ defmodule IntSet do
     else
       bin
     end
+  end
+
+  def disjoint?(%IntSet{s: <<>>}, %IntSet{s: _}), do: true
+  def disjoint?(%IntSet{s: _}, %IntSet{s: <<>>}), do: true
+
+  def disjoint?(%IntSet{s: a}, %IntSet{s: b}) do
+    bitwise = bitwise_bits(&band/2, a, b)
+    len = bit_size(bitwise)
+
+    bitwise == <<0::size(len)>>
   end
 
   @doc """
