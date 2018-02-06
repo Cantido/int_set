@@ -274,12 +274,12 @@ defmodule IntSet do
   defimpl Collectable do
     def into(original) do
       collector_fun = fn
-        set, {:cont, elem} -> IntSet.put(set, elem)
-        set, :done -> set
-        _set, :halt -> :ok
+        list, {:cont, elem} -> [elem | list]
+        list, :done -> IntSet.new(list) |> IntSet.union(original)
+        _, :halt -> :ok
       end
 
-      {original, collector_fun}
+      {[], collector_fun}
     end
   end
 
