@@ -185,7 +185,7 @@ defmodule IntSet do
 
 
   @doc """
-  Checks if int_set1 and int_set2 have no members in common.
+  Checks if `int_set` and `int_set2` have no members in common.
 
   ## Examples
 
