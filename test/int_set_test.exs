@@ -256,34 +256,31 @@ defmodule IntSetTest do
           |> Enum.to_list()
 
       IO.puts ""
-      IO.puts "Performance tests:"
+      IO.puts "Performance tests (μsec):"
 
-      IO.puts "~~Filling~~"
+      IO.puts "Op \t\tIntSet \tMapSet"
+
       {intset_time, intset} = :timer.tc(fn -> IntSet.new(ints) end)
       {mapset_time, mapset} = :timer.tc(fn -> MapSet.new(ints) end)
-      IO.puts "IntSet took #{intset_time} usec to fill"
-      IO.puts "MapSet took #{mapset_time} usec to fill"
+      IO.puts "Filling \t#{intset_time} \t#{mapset_time}"
 
-      IO.puts "~~Lookup~~"
+      {intset_collect, _} = :timer.tc(fn -> Enum.into(ints, IntSet.new()) end)
+      {mapset_collect, _} = :timer.tc(fn -> Enum.into(ints, MapSet.new()) end)
+      IO.puts "Collection \t#{intset_collect} \t#{mapset_collect}"
+
       {intset_lookups, _} = :timer.tc(fn -> Enum.member?(intset, 1) end)
       {mapset_lookups, _} = :timer.tc(fn -> Enum.member?(mapset, 1) end)
-      IO.puts "IntSet took #{intset_lookups} usec to look up a number"
-      IO.puts "MapSet took #{mapset_lookups} usec to look up a number"
+      IO.puts "Lookup \t\t#{intset_lookups} \t#{mapset_lookups}"
 
-      IO.puts "~~Insertion~~"
       {intset_insert, _} = :timer.tc(fn -> IntSet.put(intset, 10000) end)
       {mapset_insert, _} = :timer.tc(fn -> MapSet.put(mapset, 10000) end)
-      IO.puts "IntSet took #{intset_insert} usec to insert a number"
-      IO.puts "MapSet took #{mapset_insert} usec to insert a number"
-
+      IO.puts "Insertion \t#{intset_insert} \t#{mapset_insert}"
 
       is = IntSet.new([1])
       ms = MapSet.new([1])
-      IO.puts "~~Difference~~"
       {intset_diff, _} = :timer.tc(fn -> IntSet.difference(intset, is) end)
       {mapset_diff, _} = :timer.tc(fn -> MapSet.difference(mapset, ms) end)
-      IO.puts "IntSet took #{intset_diff} usec to diff a one-member set"
-      IO.puts "MapSet took #{mapset_diff} usec to diff a one-member set"
+      IO.puts "Difference \t#{intset_diff} \t#{mapset_diff}"
     end
   end
 end
