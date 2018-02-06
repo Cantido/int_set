@@ -127,6 +127,49 @@ defmodule IntSet do
   def union(%IntSet{s: <<>>}, %IntSet{} = b), do: b
   def union(%IntSet{s: <<>>}, %IntSet{s: <<>>}), do: %IntSet{}
 
+
+  @doc """
+  Returns a set that is `int_set1` without the members of `int_set2`.
+
+  ## Examples
+
+      iex> IntSet.difference(IntSet.new([1, 2]), IntSet.new([2, 3, 4]))
+      #IntSet<[1]>
+
+  """
+  def difference(int_set1, int_set2)
+
+  def difference(%IntSet{s: a}, %IntSet{s: b}) do
+    %IntSet{s: bitwise_bits(&bdiff/2, a, b)}
+  end
+
+  defp bdiff(a, b) when is_number(a) and is_number(b) do
+    band(a, bnot(b))
+  end
+
+  @bitwise_chunk_bytes 1
+  @bitwise_chunk_bits @bitwise_chunk_bytes * 8
+
+  defp bitwise_bits(fun, a, b) do
+    # IO.puts "bitwise op on byte-lengths of #{byte_size(a)} and #{byte_size(b)}"
+    max_bytes = max(byte_size(a), byte_size(b))
+    max_bits =  max_bytes * 8
+
+    <<abin::big-integer-size(max_bits)>> = right_pad(a, max_bytes)
+    <<bbin::big-integer-size(max_bits)>> = right_pad(b, max_bytes)
+    <<fun.(abin, bbin)::size(max_bits)>>
+  end
+
+  defp right_pad(bin, size_bytes) when is_bitstring(bin) and is_integer(size_bytes) and size_bytes > 0 do
+    target_bit_size = size_bytes * 8
+    pad_size = target_bit_size - bit_size(bin)
+    if pad_size > 0 do
+      <<bin::bitstring, 0::size(pad_size)>>
+    else
+      bin
+    end
+  end
+
   @doc """
   Add a value to the int set.
 

@@ -80,6 +80,77 @@ defmodule IntSetTest do
     end
   end
 
+  describe "IntSet.difference/2" do
+
+    test "removes a member from the list" do
+      subtrahend = IntSet.new(4)
+      refute IntSet.new(4) |> IntSet.difference(subtrahend) |> Enum.member?(4)
+    end
+
+    test "Removing from an empty set is fine" do
+      subtrahend = IntSet.new(8)
+      refute IntSet.new() |> IntSet.difference(subtrahend) |> Enum.member?(8)
+    end
+
+    test "boundary test; [0] - [0]" do
+      minuend = IntSet.new([0])
+      subtrahend = IntSet.new([0])
+      refute IntSet.difference(minuend, subtrahend) |> Enum.member?(0)
+    end
+    #
+    # test "boundary test; [0] - [1]" do
+    #   minuend = IntSet.new([0])
+    #   subtrahend = IntSet.new([1])
+    #   diff =  IntSet.difference(minuend, subtrahend)
+    # end
+
+
+    # test "boundary test; [1] - [0]" do
+    #   minuend = IntSet.new([1])
+    #   subtrahend = IntSet.new([0])
+    #   refute IntSet.difference(minuend, subtrahend) |> Enum.member?(1)
+    # end
+
+    # test "boundary test; [1, 2] - [2, 3, 4]" do
+    #   subtrahend = IntSet.new([2, 3, 4])
+    #   diff = IntSet.new([1, 2]) |> IntSet.difference(subtrahend)
+    #
+    #   assert Enum.to_list(diff) == [1]
+    # end
+
+    test "boundary test; [1] - [2]" do
+      subtrahend = IntSet.new([2])
+      diff = IntSet.new([1]) |> IntSet.difference(subtrahend)
+
+      assert Enum.to_list(diff) == [1]
+    end
+    #
+    # test "boundary test; 1 - 7" do
+    #   subtrahend = IntSet.new(7)
+    #   refute IntSet.new(1) |> IntSet.difference(subtrahend) |> Enum.member?(7)
+    # end
+
+    # property "removes a member from the list" do
+    #   check all member <- positive_integer() do
+    #     min = IntSet.new(member)
+    #     sub = IntSet.new(member)
+    #     diff = IntSet.difference(min, sub)
+    #
+    #     refute Enum.member?(diff, member)
+    #     assert Enum.count(min) - 1 == Enum.count(diff)
+    #   end
+    # end
+
+    property "removes a member from the list" do
+      check all minuend <- list_of(positive_integer(), max_tries: 100),
+                int <- positive_integer(),
+                max_runs: 1000 do
+        subtrahend = IntSet.new(int)
+        refute IntSet.new(minuend) |> IntSet.difference(subtrahend) |> Enum.member?(int)
+      end
+    end
+  end
+
   describe "IntSet.bitstring/1" do
     property "returns an equal bitstring to that which created it" do
       check all int <- positive_integer() do
@@ -164,7 +235,7 @@ defmodule IntSetTest do
   end
 
   describe "Performance" do
-    @tag :skip
+    # @tag :skip
     test "time performance against MapSet" do
       # any integer values much bigger than this inconsitently fail. Not sure why, yet.
       int_max = 10000000
@@ -177,24 +248,32 @@ defmodule IntSetTest do
       IO.puts ""
       IO.puts "Performance tests:"
 
+      IO.puts "~~Filling~~"
       {intset_time, intset} = :timer.tc(fn -> IntSet.new(ints) end)
       {mapset_time, mapset} = :timer.tc(fn -> MapSet.new(ints) end)
-      IO.puts "~~Filling~~"
       IO.puts "IntSet took #{intset_time} usec to fill"
       IO.puts "MapSet took #{mapset_time} usec to fill"
 
-      {intset_lookups, _} = :timer.tc(fn -> Enum.member?(intset, 10000) end)
-      {mapset_lookups, _} = :timer.tc(fn -> Enum.member?(mapset, 10000) end)
       IO.puts "~~Lookup~~"
+      {intset_lookups, _} = :timer.tc(fn -> Enum.member?(intset, 1) end)
+      {mapset_lookups, _} = :timer.tc(fn -> Enum.member?(mapset, 1) end)
       IO.puts "IntSet took #{intset_lookups} usec to look up a number"
       IO.puts "MapSet took #{mapset_lookups} usec to look up a number"
 
-
+      IO.puts "~~Insertion~~"
       {intset_insert, _} = :timer.tc(fn -> IntSet.put(intset, 10000) end)
       {mapset_insert, _} = :timer.tc(fn -> MapSet.put(mapset, 10000) end)
-      IO.puts "~~Insertion~~"
       IO.puts "IntSet took #{intset_insert} usec to insert a number"
       IO.puts "MapSet took #{mapset_insert} usec to insert a number"
+
+
+      is = IntSet.new([1])
+      ms = MapSet.new([1])
+      IO.puts "~~Difference~~"
+      {intset_diff, _} = :timer.tc(fn -> IntSet.difference(intset, is) end)
+      {mapset_diff, _} = :timer.tc(fn -> MapSet.difference(mapset, ms) end)
+      IO.puts "IntSet took #{intset_diff} usec to diff a one-member set"
+      IO.puts "MapSet took #{mapset_diff} usec to diff a one-member set"
     end
   end
 end
