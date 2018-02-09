@@ -126,18 +126,9 @@ defmodule IntSet do
   @spec union(t, t) :: t
   def union(x, y)
 
-  def union(
-    %IntSet{s: <<a :: 1, arest :: bitstring>>},
-    %IntSet{s: <<b :: 1, brest :: bitstring>>}
-  ) do
-    %IntSet{s: tail_bin} = union new(arest), new(brest)
-    %IntSet{s: <<(a ||| b) :: 1, tail_bin :: bitstring>>}
+  def union(%IntSet{s: a}, %IntSet{s: b}) do
+    %IntSet{s: bitwise_bits(&bor/2, a, b)}
   end
-
-  def union(%IntSet{} = a, %IntSet{s: <<>>}), do: a
-  def union(%IntSet{s: <<>>}, %IntSet{} = b), do: b
-  def union(%IntSet{s: <<>>}, %IntSet{s: <<>>}), do: %IntSet{}
-
 
   @doc """
   Returns a set that is `int_set1` without the members of `int_set2`.
@@ -173,7 +164,7 @@ defmodule IntSet do
     <<fun.(abin, bbin)::size(max_bits)>>
   end
 
-  defp right_pad(bin, size_bytes) when is_bitstring(bin) and is_integer(size_bytes) and size_bytes > 0 do
+  defp right_pad(bin, size_bytes) when is_bitstring(bin) and is_integer(size_bytes) and size_bytes >= 0 do
     target_bit_size = size_bytes * 8
     pad_size = target_bit_size - bit_size(bin)
     if pad_size > 0 do
