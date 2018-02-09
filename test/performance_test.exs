@@ -4,8 +4,8 @@ defmodule IntSetPerformanceTest do
   describe "Performance" do
     test "time performance against MapSet" do
       # any integer values much bigger than this inconsitently fail. Not sure why, yet.
-      results1 = perftest(10000000, 1000)
-      results2 = perftest(10000000, 10000)
+      results1 = perftest(10_000_000, 1000)
+      results2 = perftest(10_000_000, 10000)
 
       print_results(results1)
       print_results(results2)
@@ -13,13 +13,16 @@ defmodule IntSetPerformanceTest do
   end
 
   defp perftest(int_max, capacity) do
-    ints = Stream.repeatedly(fn -> :rand.uniform(int_max) end)
-        |> Stream.take(capacity)
-        |> Enum.to_list()
+    ints =
+      Stream.repeatedly(fn -> :rand.uniform(int_max) end)
+      |> Stream.take(capacity)
+      |> Enum.to_list()
 
-    ints2 = Stream.repeatedly(fn -> :rand.uniform(int_max) end)
-        |> Stream.take(1000)
-        |> Enum.to_list()
+    ints2 =
+      Stream.repeatedly(fn -> :rand.uniform(int_max) end)
+      |> Stream.take(1000)
+      |> Enum.to_list()
+
     ints_size = Enum.count(ints)
     ints2_size = Enum.count(ints2)
 
@@ -66,20 +69,23 @@ defmodule IntSetPerformanceTest do
       {intset_diff, mapset_diff}
     } = results
 
-    IO.puts ""
-    IO.puts "Performance tests (μsec):"
-    IO.puts "Sets of #{ints_size} size, operations performed using another set of #{ints2_size} items."
+    IO.puts("")
+    IO.puts("Performance tests (μsec):")
 
-    IO.puts "Op \t\tIntSet \t\tMapSet"
+    IO.puts(
+      "Sets of #{ints_size} size, operations performed using another set of #{ints2_size} items."
+    )
 
-    IO.puts "Filling \t#{intset_time} \t\t#{mapset_time}"
+    IO.puts("Op \t\tIntSet \t\tMapSet")
 
-    IO.puts "Collection \t#{intset_collect} \t\t#{mapset_collect}"
-    IO.puts "Lookup \t\t#{intset_lookups/ints2_size} \t\t#{mapset_lookups/ints2_size}"
-    IO.puts "Insertion \t#{intset_insert/ints2_size} \t#{mapset_insert/ints2_size}"
+    IO.puts("Filling \t#{intset_time} \t\t#{mapset_time}")
 
-    IO.puts "Union \t\t#{intset_union} \t\t#{mapset_union}"
+    IO.puts("Collection \t#{intset_collect} \t\t#{mapset_collect}")
+    IO.puts("Lookup \t\t#{intset_lookups / ints2_size} \t\t#{mapset_lookups / ints2_size}")
+    IO.puts("Insertion \t#{intset_insert / ints2_size} \t#{mapset_insert / ints2_size}")
 
-    IO.puts "Difference \t#{intset_diff} \t\t#{mapset_diff}"
+    IO.puts("Union \t\t#{intset_union} \t\t#{mapset_union}")
+
+    IO.puts("Difference \t#{intset_diff} \t\t#{mapset_diff}")
   end
 end

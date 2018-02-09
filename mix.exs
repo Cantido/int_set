@@ -11,7 +11,7 @@ defmodule IntSet.MixProject do
       package: package(),
       deps: deps(),
       source_url: "https://github.com/Cantido/int_set",
-      dialyzer: [ flags: ["-Wunmatched_returns", :error_handling, :race_conditions]]
+      dialyzer: [flags: ["-Wunmatched_returns", :error_handling, :race_conditions]]
     ]
   end
 
@@ -34,7 +34,7 @@ defmodule IntSet.MixProject do
       files: ["lib", "mix.exs", "README.md", "LICENSE"],
       maintainers: ["Rosa Richter"],
       licenses: ["GPL v3"],
-      links: %{"Github" => "https://github.com/Cantido/int_set"},
+      links: %{"Github" => "https://github.com/Cantido/int_set"}
     ]
   end
 end

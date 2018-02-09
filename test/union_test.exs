@@ -10,10 +10,12 @@ defmodule IntSetUnionTest do
                 arg2 = IntSet.new(list2) do
         union1 = IntSet.union(arg1, arg2)
         union2 = IntSet.union(arg2, arg1)
+
         Enum.each(arg1, fn i ->
           assert Enum.member?(union1, i)
           assert Enum.member?(union2, i)
         end)
+
         Enum.each(arg2, fn i ->
           assert Enum.member?(union1, i)
           assert Enum.member?(union2, i)

@@ -19,6 +19,7 @@ defmodule IntSetNewTest do
     property "can accept arbitrary lists of positive integers" do
       check all list <- list_of(positive_integer()) do
         set = IntSet.new(list)
+
         Enum.each(list, fn x ->
           assert Enum.member?(set, x)
         end)

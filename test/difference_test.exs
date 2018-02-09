@@ -10,6 +10,7 @@ defmodule IntSetDifferenceTest do
                 subtrahend = IntSet.new(list2),
                 max_runs: 1000 do
         difference = IntSet.difference(minuend, subtrahend)
+
         Enum.each(subtrahend, fn i ->
           refute Enum.member?(difference, i)
         end)

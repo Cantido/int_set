@@ -1,5 +1,6 @@
 defmodule IntSet do
   use Bitwise
+
   @moduledoc """
   Efficiently store and index a set of non-negative integers.
 
@@ -33,13 +34,10 @@ defmodule IntSet do
   @opaque t :: %__MODULE__{s: bitstring}
 
   defguardp is_index(i)
-    when is_integer(i)
-     and i >= 0
+            when is_integer(i) and i >= 0
 
   defguardp can_contain(s, i)
-    when is_index(i)
-     and is_bitstring(s)
-     and bit_size(s) > i
+            when is_index(i) and is_bitstring(s) and bit_size(s) > i
 
   @doc """
   Create an empty int set.
@@ -106,7 +104,8 @@ defmodule IntSet do
     bits
   end
 
-  defp seqput(bits, [next | rest]) when is_bitstring(bits) and is_integer(next) and bit_size(bits) <= next do
+  defp seqput(bits, [next | rest])
+       when is_bitstring(bits) and is_integer(next) and bit_size(bits) <= next do
     pad_bits = next - bit_size(bits)
     new_bits = <<bits::bitstring, 0::size(pad_bits), 1::1>>
     seqput(new_bits, rest)
@@ -157,23 +156,24 @@ defmodule IntSet do
   defp bitwise_bits(fun, a, b) do
     # IO.puts "bitwise op on byte-lengths of #{byte_size(a)} and #{byte_size(b)}"
     max_bytes = max(byte_size(a), byte_size(b))
-    max_bits =  max_bytes * 8
+    max_bits = max_bytes * 8
 
     <<abin::big-integer-size(max_bits)>> = right_pad(a, max_bytes)
     <<bbin::big-integer-size(max_bits)>> = right_pad(b, max_bytes)
     <<fun.(abin, bbin)::size(max_bits)>>
   end
 
-  defp right_pad(bin, size_bytes) when is_bitstring(bin) and is_integer(size_bytes) and size_bytes >= 0 do
+  defp right_pad(bin, size_bytes)
+       when is_bitstring(bin) and is_integer(size_bytes) and size_bytes >= 0 do
     target_bit_size = size_bytes * 8
     pad_size = target_bit_size - bit_size(bin)
+
     if pad_size > 0 do
       <<bin::bitstring, 0::size(pad_size)>>
     else
       bin
     end
   end
-
 
   @doc """
   Checks if `int_set` and `int_set2` have no members in common.
@@ -231,7 +231,8 @@ defmodule IntSet do
   @spec delete(t, non_neg_integer) :: t
   def delete(set, x)
 
-  def delete(%IntSet{s: s} = set, x) when is_index(x) and is_bitstring(s) and not can_contain(s, x) do
+  def delete(%IntSet{s: s} = set, x)
+      when is_index(x) and is_bitstring(s) and not can_contain(s, x) do
     set
   end
 
@@ -242,10 +243,9 @@ defmodule IntSet do
   @spec set_bit(t, non_neg_integer, 0 | 1) :: t
   defp set_bit(%IntSet{} = set, i, x) when x in 0..1 do
     %IntSet{s: s} = ensure_capacity_for(set, i)
-    <<pre :: size(i), _ :: 1, post :: bitstring>> = s
-    %IntSet{s: <<pre :: size(i), x :: 1, post :: bitstring>>}
+    <<pre::size(i), _::1, post::bitstring>> = s
+    %IntSet{s: <<pre::size(i), x::1, post::bitstring>>}
   end
-
 
   @spec ensure_capacity_for(t, non_neg_integer) :: t
   defp ensure_capacity_for(s, x)
@@ -257,7 +257,7 @@ defmodule IntSet do
   defp ensure_capacity_for(%IntSet{s: s}, x) when is_index(x) and bit_size(s) <= x do
     total_bits_needed = x + 1
     bits_to_add = total_bits_needed - bit_size(s)
-    %IntSet{s: <<s :: bitstring, 0 :: size(bits_to_add)>>}
+    %IntSet{s: <<s::bitstring, 0::size(bits_to_add)>>}
   end
 
   @doc """
@@ -307,19 +307,16 @@ defmodule IntSet do
     end
 
     defguard is_index(i)
-      when is_integer(i)
-       and i >= 0
+             when is_integer(i) and i >= 0
 
     def member?(%IntSet{}, x) when is_integer(x) and x < 0, do: {:ok, false}
     def member?(%IntSet{s: s}, x) when is_index(x) and bit_size(s) <= x, do: {:ok, false}
-    def member?(%IntSet{s: <<0 :: 1, _rst :: bitstring>>}, 0), do: {:ok, false}
-    def member?(%IntSet{s: <<1 :: 1, _rst :: bitstring>>}, 0), do: {:ok, true}
+    def member?(%IntSet{s: <<0::1, _rst::bitstring>>}, 0), do: {:ok, false}
+    def member?(%IntSet{s: <<1::1, _rst::bitstring>>}, 0), do: {:ok, true}
 
     def member?(%IntSet{s: s}, x)
-    when is_index(x)
-     and bit_size(s) > x
-    do
-      <<_ :: size(x), i :: 1, _ :: bitstring>> = s
+        when is_index(x) and bit_size(s) > x do
+      <<_::size(x), i::1, _::bitstring>> = s
       {:ok, i == 1}
     end
 
@@ -344,7 +341,7 @@ defmodule IntSet do
     def reduce(%IntSet{s: s}, {:cont, acc}, fun) do
       last_i = bit_size(s) - 1
       before_last_size = last_i
-      <<h :: bitstring-size(before_last_size), last_flag :: 1>> = s
+      <<h::bitstring-size(before_last_size), last_flag::1>> = s
 
       rest = IntSet.new(h)
 

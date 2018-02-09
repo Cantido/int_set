@@ -11,8 +11,7 @@ defmodule IntSetDisjointTest do
     end
 
     property "adjacent integers are disjoint" do
-      check all a <- positive_integer(),
-                b = a + 1 do
+      check all a <- positive_integer(), b = a + 1 do
         as = IntSet.new(a)
         bs = IntSet.new(b)
         assert IntSet.disjoint?(as, bs)
@@ -21,8 +20,7 @@ defmodule IntSetDisjointTest do
     end
 
     property "an empty set is disjoint from any other set" do
-      check all ints <- list_of(positive_integer(), max_tries: 100),
-                set = IntSet.new(ints) do
+      check all ints <- list_of(positive_integer(), max_tries: 100), set = IntSet.new(ints) do
         empty = IntSet.new()
         assert IntSet.disjoint?(set, empty)
         assert IntSet.disjoint?(empty, set)

@@ -6,6 +6,7 @@ defmodule IntSetEnumerableTest do
     property "is collectable" do
       check all list <- list_of(positive_integer()) do
         set = Enum.into(list, IntSet.new())
+
         Enum.each(list, fn x ->
           assert Enum.member?(set, x)
         end)
