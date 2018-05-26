@@ -58,3 +58,8 @@ Benchee.run %{
     "IntSet.intersection" => fn() -> IntSet.intersection(small_is, small_is2) end,
     "MapSet.intersection" => fn() -> MapSet.intersection(small_ms, small_ms2) end
 }, parallel: 4, memory_time: 2, print: [fast_warning: false]
+
+Benchee.run %{
+    "IntSet.equal?" => fn() -> IntSet.equal?(small_is, small_is2) end,
+    "MapSet.equal?" => fn() -> MapSet.equal?(small_ms, small_ms2) end
+}, parallel: 4, memory_time: 2, print: [fast_warning: false]

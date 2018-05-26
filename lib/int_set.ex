@@ -279,6 +279,23 @@ defmodule IntSet do
   end
 
   @doc """
+  Checks if two sets are equal
+
+  ## Examples
+
+      iex> IntSet.equal?(IntSet.new([1, 2]), IntSet.new([2, 1, 1]))
+      true
+      iex> IntSet.equal?(IntSet.new([1, 2]), IntSet.new([3, 4]))
+      false
+  """
+  @spec equal?(t, t) :: boolean
+  def equal?(int_set1, int_set2)
+
+  def equal?(a, b) do
+    Enum.to_list(a) == Enum.to_list(b)
+  end
+
+  @doc """
   Get a bitstring representing the members of a set.
 
   ## Examples
