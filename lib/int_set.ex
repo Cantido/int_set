@@ -176,6 +176,24 @@ defmodule IntSet do
   end
 
   @doc """
+  Find all elements that are in both `int_set1` and `int_set2`.
+
+  ## Examples
+
+      iex> IntSet.intersection(IntSet.new([1, 2]), IntSet.new([2, 3, 4]))
+      #IntSet<[2]>
+
+      iex> IntSet.intersection(IntSet.new([1, 2]), IntSet.new([3, 4]))
+      #IntSet<[]>
+  """
+  @spec intersection(t, t) :: t
+  def intersection(int_set1, int_set2)
+
+  def intersection(%IntSet{s: a}, %IntSet{s: b}) do
+    %IntSet{s: bitwise_bits(&band/2, a, b)}
+  end
+
+  @doc """
   Checks if `int_set` and `int_set2` have no members in common.
 
   ## Examples
