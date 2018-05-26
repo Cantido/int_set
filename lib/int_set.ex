@@ -291,9 +291,29 @@ defmodule IntSet do
   @spec equal?(t, t) :: boolean
   def equal?(int_set1, int_set2)
 
-  def equal?(a, b) do
-    Enum.to_list(a) == Enum.to_list(b)
+  def equal?(%IntSet{s: a}, %IntSet{s: b}) do
+    equal_inner(a, b)
   end
+
+  # The choice of powers-of-two binary sizes was arbitrary.
+  # The choice to stop at 16 bytes was not.
+  # Performance testing indicates that performance maxes out and we start getting slower.
+  # Also, memory usage drops substantially: it drops to a quarter of what it was when we stop at 8 bytes!
+  # Caveat: This is probably only true for my machine (eight 64-bit cores)
+  defp equal_inner(<<a::binary-size(16), arest::bitstring>>, <<b::binary-size(16), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+  defp equal_inner(<<a::binary-size(8), arest::bitstring>>, <<b::binary-size(8), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+  defp equal_inner(<<a::binary-size(4), arest::bitstring>>, <<b::binary-size(4), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+  defp equal_inner(<<a::binary-size(2), arest::bitstring>>, <<b::binary-size(2), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+  defp equal_inner(<<a, arest::bitstring>>, <<b, brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+
+  defp equal_inner(<<a::size(1), arest::bitstring>>, <<b::size(1), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+
+  defp equal_inner(<<0::size(1), rest::bitstring>>, <<>>), do: equal_inner(rest, <<>>)
+  defp equal_inner(<<>>, <<0::size(1), rest::bitstring>>), do: equal_inner(rest, <<>>)
+
+  defp equal_inner(<<a::size(1)>>, <<b::size(1)>>) when a == b, do: true
+  defp equal_inner(<<>>, <<>>), do: true
+  defp equal_inner(_, _), do: false
 
   @doc """
   Get a bitstring representing the members of a set.
