@@ -189,6 +189,9 @@ defmodule IntSet do
   @spec intersection(t, t) :: t
   def intersection(int_set1, int_set2)
 
+  def intersection(%IntSet{s: <<>>}, %IntSet{s: _}), do: IntSet.new
+  def intersection(%IntSet{s: _}, %IntSet{s: <<>>}), do: IntSet.new
+
   def intersection(%IntSet{s: a}, %IntSet{s: b}) do
     %IntSet{s: bitwise_bits(&band/2, a, b)}
   end
