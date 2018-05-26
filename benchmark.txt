@@ -1,0 +1,341 @@
+Compiling 1 file (.ex)
+Operating System: Linux"
+CPU Information: Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz
+Number of Available Cores: 8
+Available memory: 15.60 GB
+Elixir 1.6.5
+Erlang 20.3
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 2 s
+parallel: 8
+inputs: Middle (100 Thousand), Small (1 Thousand)
+Estimated total run time: 36 s
+
+
+Benchmarking IntSet.new with input Middle (100 Thousand)...
+Benchmarking IntSet.new with input Small (1 Thousand)...
+Benchmarking MapSet.new with input Middle (100 Thousand)...
+Benchmarking MapSet.new with input Small (1 Thousand)...
+
+##### With input Middle (100 Thousand) #####
+Name                 ips        average  deviation         median         99th %
+IntSet.new         23.22       43.06 ms    ±10.19%       42.42 ms       56.71 ms
+MapSet.new         21.43       46.67 ms    ±11.47%       45.38 ms       70.14 ms
+
+Comparison:
+IntSet.new         23.22
+MapSet.new         21.43 - 1.08x slower
+
+Memory usage statistics:
+
+Name               average  deviation         median         99th %
+IntSet.new        17.26 MB     ±0.58%       17.27 MB       17.27 MB
+MapSet.new         5.35 MB     ±0.00%        5.35 MB        5.35 MB
+
+Comparison:
+IntSet.new        17.27 MB
+MapSet.new         5.35 MB - 0.31x memory usage
+
+##### With input Small (1 Thousand) #####
+Name                 ips        average  deviation         median         99th %
+MapSet.new        4.80 K      208.21 μs    ±71.91%         204 μs         237 μs
+IntSet.new        2.46 K      406.32 μs    ±54.09%         398 μs      524.80 μs
+
+Comparison:
+MapSet.new        4.80 K
+IntSet.new        2.46 K - 1.95x slower
+
+Memory usage statistics:
+
+Name               average  deviation         median         99th %
+MapSet.new         8.97 KB     ±0.00%        8.97 KB        8.97 KB
+IntSet.new       290.52 KB     ±6.35%      293.89 KB      293.89 KB
+
+Comparison:
+MapSet.new         8.97 KB
+IntSet.new       293.89 KB - 32.77x memory usage
+Operating System: Linux"
+CPU Information: Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz
+Number of Available Cores: 8
+Available memory: 15.60 GB
+Elixir 1.6.5
+Erlang 20.3
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 2 s
+parallel: 8
+inputs: million, one, thousand
+Estimated total run time: 54 s
+
+
+Benchmarking Enum.member? IntSet with input million...
+Benchmarking Enum.member? IntSet with input one...
+Benchmarking Enum.member? IntSet with input thousand...
+Benchmarking Enum.member? MapSet with input million...
+Benchmarking Enum.member? MapSet with input one...
+Benchmarking Enum.member? MapSet with input thousand...
+
+##### With input million #####
+Name                          ips        average  deviation         median         99th %
+Enum.member? IntSet       10.99 M      0.0910 μs ±21746.81%           0 μs        0.23 μs
+Enum.member? MapSet       10.24 M      0.0977 μs ±21442.68%           0 μs        0.25 μs
+
+Comparison:
+Enum.member? IntSet       10.99 M
+Enum.member? MapSet       10.24 M - 1.07x slower
+
+Memory usage statistics:
+
+Name                   Memory usage
+Enum.member? IntSet           616 B
+Enum.member? MapSet           640 B - 1.04x memory usage
+
+**All measurements for memory usage were the same**
+
+##### With input one #####
+Name                          ips        average  deviation         median         99th %
+Enum.member? MapSet        7.40 M       0.135 μs ±13951.15%           0 μs        0.25 μs
+Enum.member? IntSet        4.76 M        0.21 μs  ±8328.32%        0.20 μs        0.40 μs
+
+Comparison:
+Enum.member? MapSet        7.40 M
+Enum.member? IntSet        4.76 M - 1.56x slower
+
+Memory usage statistics:
+
+Name                   Memory usage
+Enum.member? MapSet           640 B
+Enum.member? IntSet           120 B - 0.19x memory usage
+
+**All measurements for memory usage were the same**
+
+##### With input thousand #####
+Name                          ips        average  deviation         median         99th %
+Enum.member? MapSet        6.78 M       0.148 μs ±12668.03%        0.20 μs        0.26 μs
+Enum.member? IntSet        2.93 M        0.34 μs  ±1192.51%        0.30 μs        0.50 μs
+
+Comparison:
+Enum.member? MapSet        6.78 M
+Enum.member? IntSet        2.93 M - 2.31x slower
+
+Memory usage statistics:
+
+Name                   Memory usage
+Enum.member? MapSet           640 B
+Enum.member? IntSet           120 B - 0.19x memory usage
+
+**All measurements for memory usage were the same**
+Operating System: Linux"
+CPU Information: Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz
+Number of Available Cores: 8
+Available memory: 15.60 GB
+Elixir 1.6.5
+Erlang 20.3
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 2 s
+parallel: 8
+inputs: million, one, thousand
+Estimated total run time: 54 s
+
+
+Benchmarking IntSet.put with input million...
+Benchmarking IntSet.put with input one...
+Benchmarking IntSet.put with input thousand...
+Benchmarking MapSet.put with input million...
+Benchmarking MapSet.put with input one...
+Benchmarking MapSet.put with input thousand...
+
+##### With input million #####
+Name                 ips        average  deviation         median         99th %
+MapSet.put        3.57 M        0.28 μs   ±170.65%        0.26 μs        0.80 μs
+IntSet.put     0.00349 M      286.84 μs    ±54.56%         281 μs         309 μs
+
+Comparison:
+MapSet.put        3.57 M
+IntSet.put     0.00349 M - 1023.90x slower
+
+Memory usage statistics:
+
+Name          Memory usage
+MapSet.put         0.37 KB
+IntSet.put       122.43 KB - 333.43x memory usage
+
+**All measurements for memory usage were the same**
+
+##### With input one #####
+Name                 ips        average  deviation         median         99th %
+MapSet.put        3.64 M        0.27 μs   ±368.15%        0.26 μs        0.38 μs
+IntSet.put        1.64 M        0.61 μs   ±449.58%        0.60 μs        0.90 μs
+
+Comparison:
+MapSet.put        3.64 M
+IntSet.put        1.64 M - 2.22x slower
+
+Memory usage statistics:
+
+Name          Memory usage
+MapSet.put           344 B
+IntSet.put           200 B - 0.58x memory usage
+
+**All measurements for memory usage were the same**
+
+##### With input thousand #####
+Name                 ips        average  deviation         median         99th %
+MapSet.put        4.19 M        0.24 μs   ±152.28%        0.23 μs        0.35 μs
+IntSet.put        1.15 M        0.87 μs  ±1093.80%        0.80 μs        1.40 μs
+
+Comparison:
+MapSet.put        4.19 M
+IntSet.put        1.15 M - 3.66x slower
+
+Memory usage statistics:
+
+Name          Memory usage
+MapSet.put           312 B
+IntSet.put           336 B - 1.08x memory usage
+
+**All measurements for memory usage were the same**
+Operating System: Linux"
+CPU Information: Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz
+Number of Available Cores: 8
+Available memory: 15.60 GB
+Elixir 1.6.5
+Erlang 20.3
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 8 s
+parallel: 4
+inputs: none specified
+Estimated total run time: 30 s
+
+
+Benchmarking IntSet.union...
+Benchmarking MapSet.union...
+
+Name                   ips        average  deviation         median         99th %
+IntSet.union      944.31 K        1.06 μs   ±173.68%           1 μs           2 μs
+MapSet.union      156.40 K        6.39 μs   ±192.56%           6 μs          10 μs
+
+Comparison:
+IntSet.union      944.31 K
+MapSet.union      156.40 K - 6.04x slower
+
+Memory usage statistics:
+
+Name            Memory usage
+IntSet.union             0 B
+MapSet.union           664 B
+
+**All measurements for memory usage were the same**
+Operating System: Linux"
+CPU Information: Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz
+Number of Available Cores: 8
+Available memory: 15.60 GB
+Elixir 1.6.5
+Erlang 20.3
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 2 s
+parallel: 4
+inputs: none specified
+Estimated total run time: 18 s
+
+
+Benchmarking IntSet.difference...
+Benchmarking MapSet.difference...
+
+Name                        ips        average  deviation         median         99th %
+IntSet.difference      891.27 K        1.12 μs   ±140.54%           1 μs        2.70 μs
+MapSet.difference       48.09 K       20.79 μs    ±18.08%          20 μs          36 μs
+
+Comparison:
+IntSet.difference      891.27 K
+MapSet.difference       48.09 K - 18.53x slower
+
+Memory usage statistics:
+
+Name                 Memory usage
+IntSet.difference            0 KB
+MapSet.difference        10.43 KB
+
+**All measurements for memory usage were the same**
+Operating System: Linux"
+CPU Information: Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz
+Number of Available Cores: 8
+Available memory: 15.60 GB
+Elixir 1.6.5
+Erlang 20.3
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 8 s
+parallel: 4
+inputs: none specified
+Estimated total run time: 30 s
+
+
+Benchmarking IntSet.intersection...
+Benchmarking MapSet.intersection...
+
+Name                          ips        average  deviation         median         99th %
+IntSet.intersection      905.70 K        1.10 μs   ±229.10%           1 μs        2.20 μs
+MapSet.intersection       14.03 K       71.26 μs    ±15.30%          69 μs         118 μs
+
+Comparison:
+IntSet.intersection      905.70 K
+MapSet.intersection       14.03 K - 64.54x slower
+
+Memory usage statistics:
+
+Name                   Memory usage
+IntSet.intersection            0 KB
+MapSet.intersection        49.27 KB
+
+**All measurements for memory usage were the same**
+Operating System: Linux"
+CPU Information: Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz
+Number of Available Cores: 8
+Available memory: 15.60 GB
+Elixir 1.6.5
+Erlang 20.3
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 8 s
+parallel: 4
+inputs: none specified
+Estimated total run time: 30 s
+
+
+Benchmarking IntSet.equal?...
+Benchmarking MapSet.equal?...
+
+Name                    ips        average  deviation         median         99th %
+IntSet.equal?        2.41 M        0.41 μs  ±6821.64%           0 μs        1.20 μs
+MapSet.equal?        0.26 M        3.84 μs    ±11.95%        3.80 μs        5.70 μs
+
+Comparison:
+IntSet.equal?        2.41 M
+MapSet.equal?        0.26 M - 9.25x slower
+
+Memory usage statistics:
+
+Name             Memory usage
+IntSet.equal?           240 B
+MapSet.equal?           616 B - 2.57x memory usage
+
+**All measurements for memory usage were the same**
