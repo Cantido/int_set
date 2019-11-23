@@ -112,6 +112,27 @@ defmodule IntSet do
   end
 
   @doc """
+  Returns a set of size n with all members not in the given IntSet.
+
+  You can visualize this operation as calling `IntSet.difference/2`
+  with the first argument being a full IntSet of size n.
+
+  ## Examples
+
+      iex> IntSet.new(0) |> IntSet.inverse(1)
+      #IntSet<[]>
+
+      iex> IntSet.new(0) |> IntSet.inverse(8)
+      #IntSet<[1, 2, 3, 4, 5, 6, 7]>
+  """
+  @spec inverse(t, non_neg_integer) :: t
+  def inverse(%IntSet{s: a}, n) do
+    <<a::unsigned-big-integer>> = right_pad(a, ceil(n/8))
+    <<a::unsigned-big-integer-size(n), _rest::bits>> = <<bnot(a)>>
+    %IntSet{s: <<a>>}
+  end
+
+  @doc """
   Create a new set that contains all of the elements of both x and y.
 
   ## Examples
