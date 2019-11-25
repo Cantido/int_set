@@ -124,12 +124,15 @@ defmodule IntSet do
 
       iex> IntSet.new(0) |> IntSet.inverse(8)
       #IntSet<[1, 2, 3, 4, 5, 6, 7]>
+
+      iex> IntSet.new() |> IntSet.inverse(3)
+      #IntSet<[0, 1, 2]>
   """
   @spec inverse(t, non_neg_integer) :: t
   def inverse(%IntSet{s: a}, n) do
     <<a::unsigned-big-integer>> = right_pad(a, ceil(n/8))
     <<a::unsigned-big-integer-size(n), _rest::bits>> = <<bnot(a)>>
-    %IntSet{s: <<a>>}
+    %IntSet{s: <<a::unsigned-big-integer-size(n)>>}
   end
 
   @doc """
