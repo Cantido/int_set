@@ -1,5 +1,8 @@
 # IntSet
 
+![Hex.pm](https://img.shields.io/hexpm/v/int_set)
+![Travis (.org)](https://img.shields.io/travis/Cantido/int_set)
+
 An ordered data structure for positive integers.
 Faster than Elixir's MapSet at set operations (union, intersection, difference, equality),
 and slower at everything else.
