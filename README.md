@@ -27,7 +27,7 @@ by adding `int_set` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:int_set, "~> 1.4"}
+    {:int_set, "~> 1.5"}
   ]
 end
 ```
