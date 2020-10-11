@@ -27,6 +27,27 @@ defmodule IntSet do
 
       iex> IntSet.new([3, 1, 2])
       #IntSet<[1, 2, 3]>
+
+  Working with applications that use bitstrings becomes way easier,
+  because `IntSet.new/1` accepts a bitstring,
+  and `IntSet.bitstring/2` can return one.
+
+      iex> IntSet.new(5) |> IntSet.bitstring()
+      <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1>>
+
+      iex> IntSet.new(<<0::1, 0::1, 0::1, 0::1, 0::1, 1::1>>)
+      #IntSet<[5]>
+
+  With the use of `IntSet.bitstring/2`, and `IntSet.new/1`,
+  you can serialize this collection very efficiently.
+  Remember to pass the `byte_align: true` option into `IntSet.bitstring/2` when you do this;
+  most encoding schemes like byte-aligned data.
+
+      iex> IntSet.new([5, 6, 8, 10, 20, 23]) |> IntSet.bitstring(byte_align: true) |> Base.encode16()
+      "06A00900"
+      iex> Base.decode16!("06A00900") |> IntSet.new()
+      #IntSet<[5, 6, 8, 10, 20, 23]>
+
   """
 
   defstruct s: <<>>
@@ -362,10 +383,21 @@ defmodule IntSet do
       iex> IntSet.new() |> IntSet.bitstring()
       <<>>
 
+  You can also provide a `:byte_align option`,
+  which will pad the end of the binary with zeroes until you're at a nice round n-byte size.
+
+      iex> IntSet.new(5) |> IntSet.bitstring(byte_align: true)
+      <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1, 0::1, 0::1>>
+
   """
   @spec bitstring(t) :: bitstring
-  def bitstring(%IntSet{s: s}) do
-    s
+  def bitstring(%IntSet{s: s}, opts \\ []) do
+    if Keyword.get(opts, :byte_align, false) do
+      bits_to_add = 8 - Integer.mod(bit_size(s), 8)
+      <<s::bitstring, 0::size(bits_to_add)>>
+    else
+      s
+    end
   end
 
   defimpl Inspect do
