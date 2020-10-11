@@ -73,6 +73,7 @@ defmodule IntSet do
       #IntSet<[4, 8, 15, 16, 23, 42]>
 
   """
+  @moduledoc since: "1.0.0"
 
   defstruct s: <<>>
 
@@ -93,6 +94,7 @@ defmodule IntSet do
       #IntSet<[]>
 
   """
+  @doc since: "1.0.0"
   @spec new :: t
   def new do
     %IntSet{}
@@ -129,6 +131,7 @@ defmodule IntSet do
       #IntSet<[]>
 
   """
+  @doc since: "1.0.0"
   @spec new(non_neg_integer | Enum.t() | bitstring) :: t
   def new(members)
 
@@ -176,6 +179,7 @@ defmodule IntSet do
       iex> IntSet.new() |> IntSet.inverse(9)
       #IntSet<[0, 1, 2, 3, 4, 5, 6, 7, 8]>
   """
+  @doc since: "1.4.0"
   @spec inverse(t, non_neg_integer) :: t
   def inverse(%IntSet{s: a}, n) do
     bytes = ceil(n/8)
@@ -197,6 +201,7 @@ defmodule IntSet do
       #IntSet<[4, 7]>
 
   """
+  @doc since: "1.0.0"
   @spec union(t, t) :: t
   def union(x, y)
 
@@ -213,6 +218,7 @@ defmodule IntSet do
       #IntSet<[1]>
 
   """
+  @doc since: "1.2.0"
   @spec difference(t, t) :: t
   def difference(int_set1, int_set2)
 
@@ -261,6 +267,7 @@ defmodule IntSet do
       iex> IntSet.intersection(IntSet.new([1, 2]), IntSet.new([3, 4]))
       #IntSet<[]>
   """
+  @doc since: "1.3.0"
   @spec intersection(t, t) :: t
   def intersection(int_set1, int_set2)
 
@@ -282,6 +289,7 @@ defmodule IntSet do
       iex> IntSet.disjoint?(IntSet.new([1, 2]), IntSet.new([2, 3]))
       false
   """
+  @doc since: "1.2.0"
   @spec disjoint?(t, t) :: boolean
   def disjoint?(int_set1, int_set2)
 
@@ -306,6 +314,7 @@ defmodule IntSet do
       #IntSet<[0]>
 
   """
+  @doc since: "1.0.0"
   @spec put(t, non_neg_integer) :: t
   def put(s, x)
 
@@ -324,6 +333,7 @@ defmodule IntSet do
       #IntSet<[]>
 
   """
+  @doc since: "1.0.0"
   @spec delete(t, non_neg_integer) :: t
   def delete(set, x)
 
@@ -366,6 +376,7 @@ defmodule IntSet do
       iex> IntSet.equal?(IntSet.new([1, 2]), IntSet.new([3, 4]))
       false
   """
+  @doc since: "1.3.0"
   @spec equal?(t, t) :: boolean
   def equal?(int_set1, int_set2)
 
@@ -415,6 +426,7 @@ defmodule IntSet do
       <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1, 0::1, 0::1>>
 
   """
+  @doc since: "1.1.0"
   @spec bitstring(t) :: bitstring
   def bitstring(%IntSet{s: s}, opts \\ []) do
     if Keyword.get(opts, :byte_align, false) do
