@@ -3,6 +3,7 @@ defmodule IntSet.MixProject do
 
   def project do
     [
+      name: "IntSet",
       app: :int_set,
       version: "1.5.0",
       elixir: "~> 1.6",
@@ -10,6 +11,7 @@ defmodule IntSet.MixProject do
       description: "A time- and memory-efficient unordered data structure for positive integers.",
       package: package(),
       deps: deps(),
+      docs: docs(),
       source_url: "https://github.com/Cantido/int_set",
       dialyzer: [flags: ["-Wunmatched_returns", :error_handling, :race_conditions]]
     ]
@@ -32,10 +34,17 @@ defmodule IntSet.MixProject do
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README.md", "LICENSE"],
+      files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSE", "benchmark.txt"],
       maintainers: ["Rosa Richter"],
       licenses: ["GPL v3"],
       links: %{"Github" => "https://github.com/Cantido/int_set"}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "IntSet",
+      extras: ["README.md", "CHANGELOG.md", "benchmark.txt"]
     ]
   end
 end
