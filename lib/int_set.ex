@@ -67,10 +67,10 @@ defmodule IntSet do
   Remember to pass the `byte_align: true` option into `IntSet.bitstring/2` when you do this;
   most encoding schemes like byte-aligned data.
 
-      iex> IntSet.new([5, 6, 8, 10, 20, 23]) |> IntSet.bitstring(byte_align: true) |> Base.encode16()
-      "06A00900"
-      iex> Base.decode16!("06A00900") |> IntSet.new()
-      #IntSet<[5, 6, 8, 10, 20, 23]>
+      iex> IntSet.new([4, 8, 15, 16, 23, 42]) |> IntSet.bitstring(byte_align: true) |> Base.encode16()
+      "088181000020"
+      iex> Base.decode16!("088181000020") |> IntSet.new()
+      #IntSet<[4, 8, 15, 16, 23, 42]>
 
   """
 
