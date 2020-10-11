@@ -383,12 +383,34 @@ defmodule IntSet do
       iex> IntSet.new() |> IntSet.bitstring()
       <<>>
 
-  You can also provide a `:byte_align option`,
+  You can also provide a `:byte_align` option,
   which will pad the end of the binary with zeroes until you're at a nice round n-byte size.
+  By default this options is `false`.
 
       iex> IntSet.new(5) |> IntSet.bitstring(byte_align: true)
       <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1, 0::1, 0::1>>
 
+  ## Performance
+
+  An `IntSet` is significantly faster than Elixir's `MapSet` at set operations (union, intersection, difference, equality),
+  but slower at everything else.
+  The case for memory usage is similar:
+  better than `MapSet` for set operations,
+  worse for everything else.
+
+  | Op           | MapSet | IntSet  | Comparison    |
+  |--------------|--------|---------|---------------|
+  | new          | 4.8K   | 2.46K   | 1.95x slower  |
+  | member?      | 6.78M  | 2.93M   | 2.31x slower  |
+  | put          | 4.19M  | 1.15M   | 3.66x slower  |
+  | union        | 156.4K | 944.31K | 6.04x faster  |
+  | difference   | 48.09  | 891.27K | 18.53x faster |
+  | intersection | 14.03K | 905.70K | 64.54x faster |
+  | equal?       | 0.26M  | 2.41M   | 9.25x faster  |
+
+  There is a benchmark checked into the project repo
+  at `perf/performance_test.exs`.
+  You can run it with `mix run` to see some results for yourself.
   """
   @spec bitstring(t) :: bitstring
   def bitstring(%IntSet{s: s}, opts \\ []) do
