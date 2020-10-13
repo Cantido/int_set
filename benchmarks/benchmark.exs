@@ -20,23 +20,16 @@ Benchee.run(%{
   end,
   parallel: 4,
   memory_time: 2,
-  print: [fast_warning: false]
+  print: [fast_warning: false],
+  formatters: [
+    Benchee.Formatters.Console,
+    {Benchee.Formatters.Markdown, file: "benchmarks/results/new.md"}
+  ]
 )
 
 Benchee.run(%{
     "Enum.member? IntSet with existing member" => {fn({set, i}) ->    Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {IntSet.put(IntSet.new(ints), i), i} end},
-    "Enum.member? MapSet with existing member" => {fn({set, i}) ->    Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {MapSet.put(MapSet.new(ints), i), i} end}
-  },
-  inputs: set_sizes,
-  before_scenario: fn input ->
-    {intlist.(input), :rand.uniform(input)}
-  end,
-  parallel: 4,
-  memory_time: 2,
-  print: [fast_warning: false]
-)
-
-Benchee.run(%{
+    "Enum.member? MapSet with existing member" => {fn({set, i}) ->    Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {MapSet.put(MapSet.new(ints), i), i} end},
     "Enum.member? IntSet with nonexisting member" => {fn({set, i}) -> Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {IntSet.new(ints), i} end},
     "Enum.member? MapSet with nonexisting member" => {fn({set, i}) -> Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {MapSet.new(ints), i} end}
   },
@@ -46,23 +39,16 @@ Benchee.run(%{
   end,
   parallel: 4,
   memory_time: 2,
-  print: [fast_warning: false]
+  print: [fast_warning: false],
+  formatters: [
+    Benchee.Formatters.Console,
+    {Benchee.Formatters.Markdown, file: "benchmarks/results/member.md"}
+  ]
 )
 
 Benchee.run(%{
     "IntSet.put with existing member" => {fn({set, i}) ->    IntSet.put(set, i) end, before_scenario: fn {ints, i} -> {IntSet.new(ints) |> IntSet.put(i), i} end},
-    "MapSet.put with existing member" => {fn({set, i}) ->    MapSet.put(set, i) end, before_scenario: fn {ints, i} -> {MapSet.new(ints) |> MapSet.put(i), i} end}
-  },
-  inputs: set_sizes,
-  before_scenario: fn input ->
-    {intlist.(input), :rand.uniform(input)}
-  end,
-  parallel: 4,
-  memory_time: 2,
-  print: [fast_warning: false]
-)
-
-Benchee.run(%{
+    "MapSet.put with existing member" => {fn({set, i}) ->    MapSet.put(set, i) end, before_scenario: fn {ints, i} -> {MapSet.new(ints) |> MapSet.put(i), i} end},
     "IntSet.put with nonexisting member" => {fn({set, i}) -> IntSet.put(set, i) end, before_scenario: fn {ints, i} -> {IntSet.new(ints), i} end},
     "MapSet.put with nonexisting member" => {fn({set, i}) -> MapSet.put(set, i) end, before_scenario: fn {ints, i} -> {MapSet.new(ints), i} end}
   },
@@ -72,7 +58,11 @@ Benchee.run(%{
   end,
   parallel: 4,
   memory_time: 2,
-  print: [fast_warning: false]
+  print: [fast_warning: false],
+  formatters: [
+    Benchee.Formatters.Console,
+    {Benchee.Formatters.Markdown, file: "benchmarks/results/put.md"}
+  ]
 )
 
 Benchee.run(%{
@@ -98,7 +88,11 @@ Benchee.run(%{
   end,
   parallel: 4,
   memory_time: 2,
-  print: [fast_warning: false]
+  print: [fast_warning: false],
+  formatters: [
+    Benchee.Formatters.Console,
+    {Benchee.Formatters.Markdown, file: "benchmarks/results/difference.md"}
+  ]
 )
 
 Benchee.run(%{
@@ -116,18 +110,7 @@ Benchee.run(%{
 
 Benchee.run(%{
     "IntSet.equal? when the sets are equal" =>     {fn(a) ->      IntSet.equal?(a, a) end, before_scenario: fn {a, _b} -> IntSet.new(a) end},
-    "MapSet.equal? when the sets are equal" =>     {fn(a) ->      MapSet.equal?(a, a) end, before_scenario: fn {a, _b} -> MapSet.new(a) end}
-  },
-  inputs: set_sizes,
-  before_scenario: fn input ->
-    {intlist.(input), intlist.(input)}
-  end,
-  parallel: 4,
-  memory_time: 2,
-  print: [fast_warning: false]
-)
-
-Benchee.run(%{
+    "MapSet.equal? when the sets are equal" =>     {fn(a) ->      MapSet.equal?(a, a) end, before_scenario: fn {a, _b} -> MapSet.new(a) end},
     "IntSet.equal? when the sets are not equal" => {fn({a, b}) -> IntSet.equal?(a, b) end, before_scenario: fn {a, b} -> {IntSet.new(a), IntSet.new(b)} end},
     "MapSet.equal? when the sets are not equal" => {fn({a, b}) -> MapSet.equal?(a, b) end, before_scenario: fn {a, b} -> {MapSet.new(a), MapSet.new(b)} end}
   },
@@ -137,5 +120,9 @@ Benchee.run(%{
   end,
   parallel: 4,
   memory_time: 2,
-  print: [fast_warning: false]
+  print: [fast_warning: false],
+  formatters: [
+    Benchee.Formatters.Console,
+    {Benchee.Formatters.Markdown, file: "benchmarks/results/equal.md"}
+  ]
 )
