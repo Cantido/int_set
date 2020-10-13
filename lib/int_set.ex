@@ -319,7 +319,16 @@ defmodule IntSet do
   def put(s, x)
 
   def put(%IntSet{s: s} = set, x) when is_index(x) and is_bitstring(s) do
-    set_bit(set, x, 1)
+    set = ensure_capacity_for(set, x)
+
+    {n, size} = as_integer(set.s)
+
+    i = index_mask(x, size)
+    np = bor(n, i)
+
+    bin = from_integer(np, size)
+
+    %IntSet{s: bin}
   end
 
   @doc """
@@ -342,12 +351,31 @@ defmodule IntSet do
     set
   end
 
-  def delete(%IntSet{s: s} = set, x) when can_contain(s, x) do
-    set_bit(set, x, 0)
+  def delete(%IntSet{s: s}, x) when can_contain(s, x) do
+    {n, size} = as_integer(s)
+    i = index_mask(x, size)
+
+    bin = from_integer(bdiff(n, i), size)
+
+    %IntSet{s: bin}
   end
 
+  def member?(%IntSet{}, x) when is_integer(x) and x < 0, do: false
+  def member?(%IntSet{s: s}, x) when is_index(x) and bit_size(s) <= x, do: false
+
+  def member?(%IntSet{s: s}, x)
+      when is_index(x) and bit_size(s) > x do
+    {n, size} = as_integer(s)
+
+    finder_int = index_mask(x, size)
+
+    band(n, finder_int) != 0
+  end
+
+  def member?(%IntSet{}, _), do: false
+
   @spec set_bit(t, non_neg_integer, 0 | 1) :: t
-  defp set_bit(%IntSet{} = set, i, x) when x in 0..1 do
+  defp set_bit(%IntSet{s: s} = set, i, x) when x in 0..1 do
     %IntSet{s: s} = ensure_capacity_for(set, i)
     <<pre::size(i), _::1, post::bitstring>> = s
     %IntSet{s: <<pre::size(i), x::1, post::bitstring>>}
@@ -441,6 +469,43 @@ defmodule IntSet do
     <<bin::bitstring, 0::size(bits_to_add)>>
   end
 
+  defp as_integer(s) when is_bitstring(s) do
+    bits_to_add = 8 - rem(bit_size(s), 8)
+    s_padded = <<s::bitstring, 0::size(bits_to_add)>>
+
+    padded_size = bit_size(s_padded)
+
+    <<n::size(padded_size)>> = s_padded
+    {n, padded_size}
+  end
+
+  defp from_integer(n, size) when is_integer(n) and is_integer(size) do
+    digits =
+      if n == 0 do
+        8
+      else
+        round_up_by_eights(ceil(:math.log2(n)) + 1)
+      end
+    pre_pad = <<n::big-size(digits)>>
+
+    pad_amount = size - bit_size(pre_pad)
+
+    <<0::big-size(pad_amount), n::big-size(digits)>>
+  end
+
+  defp round_up_by_eights(n) do
+    if rem(n, 8) == 0 do
+      n
+    else
+      n + (8 - rem(n, 8))
+    end
+  end
+
+  defp index_mask(n, bitsize) when is_integer(n) and is_integer(bitsize) do
+    1 <<< bitsize - (n + 1)
+  end
+
+
   defimpl Inspect do
     import Inspect.Algebra
 
@@ -470,18 +535,7 @@ defmodule IntSet do
     defguard is_index(i)
              when is_integer(i) and i >= 0
 
-    def member?(%IntSet{}, x) when is_integer(x) and x < 0, do: {:ok, false}
-    def member?(%IntSet{s: s}, x) when is_index(x) and bit_size(s) <= x, do: {:ok, false}
-    def member?(%IntSet{s: <<0::1, _rst::bitstring>>}, 0), do: {:ok, false}
-    def member?(%IntSet{s: <<1::1, _rst::bitstring>>}, 0), do: {:ok, true}
-
-    def member?(%IntSet{s: s}, x)
-        when is_index(x) and bit_size(s) > x do
-      <<_::size(x), i::1, _::bitstring>> = s
-      {:ok, i == 1}
-    end
-
-    def member?(%IntSet{}, _), do: {:error, __MODULE__}
+    def member?(s, x), do: {:ok, IntSet.member?(s, x)}
 
     def slice(_) do
       {:error, __MODULE__}
