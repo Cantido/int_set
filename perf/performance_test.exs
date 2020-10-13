@@ -1,65 +1,141 @@
-  # any integer values much bigger than this inconsitently fail. Not sure why, yet.
-# results1 = perftest(10_000_000, 1000)
-# results2 = perftest(10_000_000, 10000)
-
-intstream = Stream.repeatedly(fn -> :rand.uniform(1_000) end)
-
 intlist = fn(size) ->
-  intstream
+  Stream.repeatedly(fn -> :rand.uniform(size) end)
   |> Stream.take(size)
   |> Enum.to_list()
 end
 
-inputs = %{
-  "Small (1 Thousand)"    => intlist.(1_000),
-  "Middle (100 Thousand)" => intlist.(100_000),
-  # "Big (10 Million)"      => intlist.(10_000_000)
+set_sizes = %{
+  "Small (1 Thousand)"    => 1_000,
+  "Middle (100 Thousand)" => 100_000
+  # "Big (1 Million)"      => 10_000_000
 }
 
-input_indices = %{
-  one: 1,
-  thousand: 1_000,
-  million: 1_000_000
-}
-
-ints = intlist.(1_000)
-ints2 = intlist.(1_000)
-small_is = IntSet.new(ints)
-small_is2 = IntSet.new(ints)
-small_ms = MapSet.new(ints)
-small_ms2 = MapSet.new(ints)
-
-Benchee.run %{
+Benchee.run(%{
     "IntSet.new" => fn(ints) -> IntSet.new(ints) end,
     "MapSet.new" => fn(ints) -> MapSet.new(ints) end
-}, inputs: inputs, parallel: 4, memory_time: 2
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    intlist.(input)
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
 
-Benchee.run %{
-    "Enum.member? IntSet" => fn(i) -> Enum.member?(small_is, i) end,
-    "Enum.member? MapSet" => fn(i) -> Enum.member?(small_ms, i) end
-}, inputs: input_indices, parallel: 4, memory_time: 2, print: [fast_warning: false]
+Benchee.run(%{
+    "Enum.member? IntSet with existing member" => {fn({set, i}) ->    Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {IntSet.put(IntSet.new(ints), i), i} end},
+    "Enum.member? MapSet with existing member" => {fn({set, i}) ->    Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {MapSet.put(MapSet.new(ints), i), i} end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), :rand.uniform(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
 
-Benchee.run %{
-    "IntSet.put" => fn(i) -> IntSet.put(small_is, i) end,
-    "MapSet.put" => fn(i) -> MapSet.put(small_ms, i) end
-}, inputs: input_indices, parallel: 4, memory_time: 2, print: [fast_warning: false]
+Benchee.run(%{
+    "Enum.member? IntSet with nonexisting member" => {fn({set, i}) -> Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {IntSet.new(ints), i} end},
+    "Enum.member? MapSet with nonexisting member" => {fn({set, i}) -> Enum.member?(set, i) end, before_scenario: fn {ints, i} -> {MapSet.new(ints), i} end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), :rand.uniform(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
 
-Benchee.run %{
-    "IntSet.union" => fn() -> IntSet.union(small_is, small_is2) end,
-    "MapSet.union" => fn() -> MapSet.union(small_ms, small_ms2) end
-}, parallel: 4, memory_time: 2, print: [fast_warning: false]
+Benchee.run(%{
+    "IntSet.put with existing member" => {fn({set, i}) ->    IntSet.put(set, i) end, before_scenario: fn {ints, i} -> {IntSet.new(ints) |> IntSet.put(i), i} end},
+    "MapSet.put with existing member" => {fn({set, i}) ->    MapSet.put(set, i) end, before_scenario: fn {ints, i} -> {MapSet.new(ints) |> MapSet.put(i), i} end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), :rand.uniform(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
 
-Benchee.run %{
-    "IntSet.difference" => fn() -> IntSet.difference(small_is, small_is2) end,
-    "MapSet.difference" => fn() -> MapSet.difference(small_ms, small_ms2) end
-}, parallel: 4, memory_time: 2, print: [fast_warning: false]
+Benchee.run(%{
+    "IntSet.put with nonexisting member" => {fn({set, i}) -> IntSet.put(set, i) end, before_scenario: fn {ints, i} -> {IntSet.new(ints), i} end},
+    "MapSet.put with nonexisting member" => {fn({set, i}) -> MapSet.put(set, i) end, before_scenario: fn {ints, i} -> {MapSet.new(ints), i} end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), :rand.uniform(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
 
-Benchee.run %{
-    "IntSet.intersection" => fn() -> IntSet.intersection(small_is, small_is2) end,
-    "MapSet.intersection" => fn() -> MapSet.intersection(small_ms, small_ms2) end
-}, parallel: 4, memory_time: 2, print: [fast_warning: false]
+Benchee.run(%{
+    "IntSet.union" => {fn({a, b}) -> IntSet.union(a, b) end, before_scenario: fn {a, b} -> {IntSet.new(a), IntSet.new(b)} end},
+    "MapSet.union" => {fn({a, b}) -> MapSet.union(a, b) end, before_scenario: fn {a, b} -> {MapSet.new(a), MapSet.new(b)} end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), intlist.(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
 
-Benchee.run %{
-    "IntSet.equal?" => fn() -> IntSet.equal?(small_is, small_is2) end,
-    "MapSet.equal?" => fn() -> MapSet.equal?(small_ms, small_ms2) end
-}, parallel: 4, memory_time: 2, print: [fast_warning: false]
+Benchee.run(%{
+    "IntSet.difference" => {fn({a, b}) -> IntSet.difference(a, b) end, before_scenario: fn {a, b} -> {IntSet.new(a), IntSet.new(b)} end},
+    "MapSet.difference" => {fn({a, b}) -> MapSet.difference(a, b) end, before_scenario: fn {a, b} -> {MapSet.new(a), MapSet.new(b)} end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), intlist.(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
+
+Benchee.run(%{
+    "IntSet.intersection" => {fn({a, b}) -> IntSet.intersection(a, b) end, before_scenario: fn {a, b} -> {IntSet.new(a), IntSet.new(b)} end},
+    "MapSet.intersection" => {fn({a, b}) -> MapSet.intersection(a, b) end, before_scenario: fn {a, b} -> {MapSet.new(a), MapSet.new(b)} end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), intlist.(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
+
+Benchee.run(%{
+    "IntSet.equal? when the sets are equal" =>     {fn(a) ->      IntSet.equal?(a, a) end, before_scenario: fn {a, _b} -> IntSet.new(a) end},
+    "MapSet.equal? when the sets are equal" =>     {fn(a) ->      MapSet.equal?(a, a) end, before_scenario: fn {a, _b} -> MapSet.new(a) end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), intlist.(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
+
+Benchee.run(%{
+    "IntSet.equal? when the sets are not equal" => {fn({a, b}) -> IntSet.equal?(a, b) end, before_scenario: fn {a, b} -> {IntSet.new(a), IntSet.new(b)} end},
+    "MapSet.equal? when the sets are not equal" => {fn({a, b}) -> MapSet.equal?(a, b) end, before_scenario: fn {a, b} -> {MapSet.new(a), MapSet.new(b)} end}
+  },
+  inputs: set_sizes,
+  before_scenario: fn input ->
+    {intlist.(input), intlist.(input)}
+  end,
+  parallel: 4,
+  memory_time: 2,
+  print: [fast_warning: false]
+)
