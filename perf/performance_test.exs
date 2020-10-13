@@ -7,7 +7,7 @@ end
 set_sizes = %{
   "Small (1 Thousand)"    => 1_000,
   "Middle (100 Thousand)" => 100_000
-  # "Big (1 Million)"      => 10_000_000
+  # "Big (1 Million)"      => 1_000_000
 }
 
 Benchee.run(%{
