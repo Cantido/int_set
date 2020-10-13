@@ -430,11 +430,15 @@ defmodule IntSet do
   @spec bitstring(t) :: bitstring
   def bitstring(%IntSet{s: s}, opts \\ []) do
     if Keyword.get(opts, :byte_align, false) do
-      bits_to_add = 8 - Integer.mod(bit_size(s), 8)
-      <<s::bitstring, 0::size(bits_to_add)>>
+      byte_align(s)
     else
       s
     end
+  end
+
+  defp byte_align(bin) do
+    bits_to_add = 8 - Integer.mod(bit_size(bin), 8)
+    <<bin::bitstring, 0::size(bits_to_add)>>
   end
 
   defimpl Inspect do
