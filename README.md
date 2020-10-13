@@ -1,7 +1,7 @@
 # IntSet
 
 [![Hex.pm](https://img.shields.io/hexpm/v/int_set)](https://hex.pm/packages/int_set)
-[![Travis (.org)](https://img.shields.io/travis/Cantido/int_set)](https://travis-ci.org/github/Cantido/int_set)
+[![Travis (.com)](https://img.shields.io/travis/com/cantido/int_set)](https://travis-ci.org/github/Cantido/int_set)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 
