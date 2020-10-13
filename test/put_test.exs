@@ -33,5 +33,23 @@ defmodule IntSetPutTest do
 
       assert Enum.member?(set, 7)
     end
+
+    test "put can put a lot" do
+      set =
+        IntSet.new()
+        |> IntSet.put(0)
+        |> IntSet.put(1)
+        |> IntSet.put(2)
+        |> IntSet.put(3)
+        |> IntSet.put(4)
+        |> IntSet.put(5)
+
+      assert Enum.member?(set, 0)
+      assert Enum.member?(set, 1)
+      assert Enum.member?(set, 2)
+      assert Enum.member?(set, 3)
+      assert Enum.member?(set, 4)
+      assert Enum.member?(set, 5)
+    end
   end
 end

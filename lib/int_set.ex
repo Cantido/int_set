@@ -1,5 +1,6 @@
 defmodule IntSet do
   use Bitwise
+  require Logger
 
   @moduledoc """
   Efficiently store and index a set of non-negative integers.
@@ -206,7 +207,9 @@ defmodule IntSet do
   def union(x, y)
 
   def union(%IntSet{s: a}, %IntSet{s: b}) do
-    %IntSet{s: bitwise_bits(&bor/2, a, b)}
+    {{ai, asize}, {bi, _bsize}} = make_size_equal(as_integer(a), as_integer(b))
+
+    %IntSet{s: from_integer(bor(ai, bi), asize)}
   end
 
   @doc """
@@ -223,7 +226,9 @@ defmodule IntSet do
   def difference(int_set1, int_set2)
 
   def difference(%IntSet{s: a}, %IntSet{s: b}) do
-    %IntSet{s: bitwise_bits(&bdiff/2, a, b)}
+    {{ai, asize}, {bi, _bsize}} = make_size_equal(as_integer(a), as_integer(b))
+
+    %IntSet{s: from_integer(bdiff(ai, bi), asize)}
   end
 
   defp bdiff(a, b) when is_number(a) and is_number(b) do
@@ -275,7 +280,9 @@ defmodule IntSet do
   def intersection(%IntSet{s: _}, %IntSet{s: <<>>}), do: IntSet.new
 
   def intersection(%IntSet{s: a}, %IntSet{s: b}) do
-    %IntSet{s: bitwise_bits(&band/2, a, b)}
+    {{ai, asize}, {bi, _bsize}} = make_size_equal(as_integer(a), as_integer(b))
+
+    %IntSet{s: from_integer(band(ai, bi), asize)}
   end
 
   @doc """
@@ -297,10 +304,9 @@ defmodule IntSet do
   def disjoint?(%IntSet{s: _}, %IntSet{s: <<>>}), do: true
 
   def disjoint?(%IntSet{s: a}, %IntSet{s: b}) do
-    bitwise = bitwise_bits(&band/2, a, b)
-    len = bit_size(bitwise)
+    {{ai, _asize}, {bi, _bsize}} = make_size_equal(as_integer(a), as_integer(b))
 
-    bitwise == <<0::size(len)>>
+    band(ai, bi) == 0
   end
 
   @doc """
@@ -322,11 +328,14 @@ defmodule IntSet do
     set = ensure_capacity_for(set, x)
 
     {n, size} = as_integer(set.s)
-
     i = index_mask(x, size)
-    np = bor(n, i)
 
-    bin = from_integer(np, size)
+    Logger.debug("Putting in #{x}, Current n is #{Integer.to_string(n, 2)}")
+
+    nb = bor(n, i)
+
+    Logger.debug("Putting in #{x}, #{n} bor #{i} is #{nb}")
+    bin = from_integer(nb, size)
 
     %IntSet{s: bin}
   end
@@ -409,28 +418,24 @@ defmodule IntSet do
   def equal?(int_set1, int_set2)
 
   def equal?(%IntSet{s: a}, %IntSet{s: b}) do
-    equal_inner(a, b)
+    {{ai, _asize}, {bi, _bsize}} = make_size_equal(as_integer(a), as_integer(b))
+
+    ai == bi
   end
 
-  # The choice of powers-of-two binary sizes was arbitrary.
-  # The choice to stop at 16 bytes was not.
-  # Performance testing indicates that performance maxes out and we start getting slower.
-  # Also, memory usage drops substantially: it drops to a quarter of what it was when we stop at 8 bytes!
-  # Caveat: This is probably only true for my machine (eight 64-bit cores)
-  defp equal_inner(<<a::binary-size(16), arest::bitstring>>, <<b::binary-size(16), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
-  defp equal_inner(<<a::binary-size(8), arest::bitstring>>, <<b::binary-size(8), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
-  defp equal_inner(<<a::binary-size(4), arest::bitstring>>, <<b::binary-size(4), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
-  defp equal_inner(<<a::binary-size(2), arest::bitstring>>, <<b::binary-size(2), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
-  defp equal_inner(<<a, arest::bitstring>>, <<b, brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+  defp make_size_equal({ai, asize}, {bi, bsize}) do
+    if asize >= bsize do
+      bits_to_add = asize - bsize
+      bi = bi <<< bits_to_add
 
-  defp equal_inner(<<a::size(1), arest::bitstring>>, <<b::size(1), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+      {{ai, asize}, {bi, asize}}
+    else
+      bits_to_add = bsize - asize
+      ai = ai <<< bits_to_add
 
-  defp equal_inner(<<0::size(1), rest::bitstring>>, <<>>), do: equal_inner(rest, <<>>)
-  defp equal_inner(<<>>, <<0::size(1), rest::bitstring>>), do: equal_inner(rest, <<>>)
-
-  defp equal_inner(<<a::size(1)>>, <<b::size(1)>>) when a == b, do: true
-  defp equal_inner(<<>>, <<>>), do: true
-  defp equal_inner(_, _), do: false
+      {{ai, bsize}, {bi, bsize}}
+    end
+  end
 
   @doc """
   Get a bitstring representing the members of a set.
@@ -482,15 +487,19 @@ defmodule IntSet do
   defp from_integer(n, size) when is_integer(n) and is_integer(size) do
     digits =
       if n == 0 do
-        8
+        0
       else
-        round_up_by_eights(ceil(:math.log2(n)) + 1)
+        round_up_by_eights(ceil(:math.log2(n)))
       end
     pre_pad = <<n::big-size(digits)>>
 
-    pad_amount = size - bit_size(pre_pad)
+    pad_amount = size - digits
 
-    <<0::big-size(pad_amount), n::big-size(digits)>>
+    if pad_amount < 0 do
+      <<n::big-size(digits)>>
+    else
+      <<0::big-size(pad_amount), n::big-size(digits)>>
+    end
   end
 
   defp round_up_by_eights(n) do
@@ -518,12 +527,12 @@ defmodule IntSet do
   defimpl Collectable do
     def into(original) do
       collector_fun = fn
-        list, {:cont, elem} -> [elem | list]
-        list, :done -> IntSet.new(list) |> IntSet.union(original)
+        set, {:cont, elem} -> IntSet.put(set, elem)
+        set, :done -> set
         _, :halt -> :ok
       end
 
-      {[], collector_fun}
+      {original, collector_fun}
     end
   end
 
