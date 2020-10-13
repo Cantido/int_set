@@ -100,7 +100,8 @@ Check out the iterations-per-second for some operations of `MapSet` compared to 
 | equal?       | 0.26M  | 2.41M   | 9.25x faster  |
 
 Memory usage is also better for union, difference, intersection, and equality.
-See [benchmark.txt](benchmark.txt) for the full benchmark.
+See the [`benchmarks/results`] directory for all the benchmarks.
+You can run the benchmarks for yourself with `mix run benchmarks/benchmark.exs`.
 
 ## Maintainer
 

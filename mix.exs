@@ -26,6 +26,7 @@ defmodule IntSet.MixProject do
   defp deps do
     [
       {:benchee, "~> 1.0", only: :dev},
+      {:benchee_markdown, "~> 0.2", only: :dev},
       {:stream_data, "~> 0.1", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
@@ -34,7 +35,7 @@ defmodule IntSet.MixProject do
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSE", "benchmark.txt"],
+      files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSE", "benchmarks"],
       maintainers: ["Rosa Richter"],
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/Cantido/int_set"}
@@ -44,7 +45,13 @@ defmodule IntSet.MixProject do
   defp docs do
     [
       main: "IntSet",
-      extras: ["README.md", "CHANGELOG.md", "benchmark.txt"]
+      api_reference: false,
+      extras: [
+        "README.md",
+        "CHANGELOG.md",
+        "code_of_conduct.md",
+        "CONTRIBUTING.md",
+      ]
     ]
   end
 end
