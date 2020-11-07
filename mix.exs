@@ -29,7 +29,7 @@ defmodule IntSet.MixProject do
       {:benchee_markdown, "~> 0.2", only: :dev},
       {:stream_data, "~> 0.1", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 
