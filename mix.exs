@@ -27,6 +27,7 @@ defmodule IntSet.MixProject do
     [
       {:benchee, "~> 1.0", only: :dev},
       {:benchee_markdown, "~> 0.2", only: :dev},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:stream_data, "~> 0.1", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
@@ -53,7 +54,7 @@ defmodule IntSet.MixProject do
         "README.md",
         "CHANGELOG.md",
         "code_of_conduct.md",
-        "CONTRIBUTING.md",
+        "CONTRIBUTING.md"
       ]
     ]
   end
