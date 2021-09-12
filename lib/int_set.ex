@@ -446,7 +446,7 @@ defmodule IntSet do
 
     def inspect(s, opts) do
       int_list = Enum.into(s, []) |> Enum.sort()
-      concat(["#IntSet<", to_doc(int_list, opts), ">"])
+      concat(["#IntSet<", to_doc(int_list, %{opts | charlists: :as_list}), ">"])
     end
   end
 
