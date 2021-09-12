@@ -38,7 +38,10 @@ defmodule IntSet.MixProject do
       files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSE", "benchmarks"],
       maintainers: ["Rosa Richter"],
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/Cantido/int_set"}
+      links: %{
+        "Github" => "https://github.com/Cantido/int_set",
+        "Sponsor" => "https://liberapay.com/rosa"
+      }
     ]
   end
 
