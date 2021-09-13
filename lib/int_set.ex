@@ -182,11 +182,14 @@ defmodule IntSet do
   @doc since: "1.4.0"
   @spec inverse(t, non_neg_integer) :: t
   def inverse(%IntSet{s: a}, n) do
-    bytes = ceil(n/8)
+    bytes = ceil(n / 8)
     padded_bits = bytes * 8
     waste_bits = padded_bits - n
     <<a::unsigned-big-integer-size(padded_bits)>> = right_pad(a, bytes)
-    <<a::unsigned-big-integer-size(n), _rest::bits-size(waste_bits)>> = <<bnot(a)::size(padded_bits)>>
+
+    <<a::unsigned-big-integer-size(n), _rest::bits-size(waste_bits)>> =
+      <<bnot(a)::size(padded_bits)>>
+
     %IntSet{s: <<a::unsigned-big-integer-size(n)>>}
   end
 
@@ -271,8 +274,8 @@ defmodule IntSet do
   @spec intersection(t, t) :: t
   def intersection(int_set1, int_set2)
 
-  def intersection(%IntSet{s: <<>>}, %IntSet{s: _}), do: IntSet.new
-  def intersection(%IntSet{s: _}, %IntSet{s: <<>>}), do: IntSet.new
+  def intersection(%IntSet{s: <<>>}, %IntSet{s: _}), do: IntSet.new()
+  def intersection(%IntSet{s: _}, %IntSet{s: <<>>}), do: IntSet.new()
 
   def intersection(%IntSet{s: a}, %IntSet{s: b}) do
     %IntSet{s: bitwise_bits(&band/2, a, b)}
@@ -389,13 +392,40 @@ defmodule IntSet do
   # Performance testing indicates that performance maxes out and we start getting slower.
   # Also, memory usage drops substantially: it drops to a quarter of what it was when we stop at 8 bytes!
   # Caveat: This is probably only true for my machine (eight 64-bit cores)
-  defp equal_inner(<<a::binary-size(16), arest::bitstring>>, <<b::binary-size(16), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
-  defp equal_inner(<<a::binary-size(8), arest::bitstring>>, <<b::binary-size(8), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
-  defp equal_inner(<<a::binary-size(4), arest::bitstring>>, <<b::binary-size(4), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
-  defp equal_inner(<<a::binary-size(2), arest::bitstring>>, <<b::binary-size(2), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
-  defp equal_inner(<<a, arest::bitstring>>, <<b, brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+  defp equal_inner(
+         <<a::binary-size(16), arest::bitstring>>,
+         <<b::binary-size(16), brest::bitstring>>
+       )
+       when a == b,
+       do: equal_inner(arest, brest)
 
-  defp equal_inner(<<a::size(1), arest::bitstring>>, <<b::size(1), brest::bitstring>>) when a == b, do: equal_inner(arest, brest)
+  defp equal_inner(
+         <<a::binary-size(8), arest::bitstring>>,
+         <<b::binary-size(8), brest::bitstring>>
+       )
+       when a == b,
+       do: equal_inner(arest, brest)
+
+  defp equal_inner(
+         <<a::binary-size(4), arest::bitstring>>,
+         <<b::binary-size(4), brest::bitstring>>
+       )
+       when a == b,
+       do: equal_inner(arest, brest)
+
+  defp equal_inner(
+         <<a::binary-size(2), arest::bitstring>>,
+         <<b::binary-size(2), brest::bitstring>>
+       )
+       when a == b,
+       do: equal_inner(arest, brest)
+
+  defp equal_inner(<<a, arest::bitstring>>, <<b, brest::bitstring>>) when a == b,
+    do: equal_inner(arest, brest)
+
+  defp equal_inner(<<a::size(1), arest::bitstring>>, <<b::size(1), brest::bitstring>>)
+       when a == b,
+       do: equal_inner(arest, brest)
 
   defp equal_inner(<<0::size(1), rest::bitstring>>, <<>>), do: equal_inner(rest, <<>>)
   defp equal_inner(<<>>, <<0::size(1), rest::bitstring>>), do: equal_inner(rest, <<>>)

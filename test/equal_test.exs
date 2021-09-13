@@ -7,7 +7,6 @@ defmodule IntSetEqualTest do
       check all list <- list_of(positive_integer(), max_tries: 100),
                 set = IntSet.new(list),
                 max_runs: 1000 do
-
         assert IntSet.equal?(set, set)
       end
     end
