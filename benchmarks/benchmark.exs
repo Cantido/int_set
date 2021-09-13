@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Rosa Richter
+#
+# SPDX-License-Identifier: MIT
+
 intlist = fn(size) ->
   Stream.repeatedly(fn -> :rand.uniform(size) end)
   |> Stream.take(size)

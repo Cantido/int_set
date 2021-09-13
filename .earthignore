@@ -2,4 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-ExUnit.start()
+/_build/
+/cover/
+/deps/
+/doc/
+/.fetch
+erl_crash.dump
+*.ez
+.elixir_ls
+

@@ -1,2 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2021 Rosa Richter
+
+SPDX-License-Identifier: MIT
+-->
+
 Work in progress!
 Benchee keeps crashing.

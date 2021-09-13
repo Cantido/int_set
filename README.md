@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Rosa Richter
+
+SPDX-License-Identifier: MIT
+-->
+
 # IntSet
 
 [![Hex.pm](https://img.shields.io/hexpm/v/int_set)](https://hex.pm/packages/int_set)

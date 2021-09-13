@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Rosa Richter
+#
+# SPDX-License-Identifier: MIT
+
 defmodule IntSet.MixProject do
   use Mix.Project
 
@@ -30,7 +34,8 @@ defmodule IntSet.MixProject do
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:stream_data, "~> 0.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:hex_licenses, "~> 0.2", only: :dev}
     ]
   end
 
@@ -38,7 +43,7 @@ defmodule IntSet.MixProject do
     [
       files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSE", "benchmarks"],
       maintainers: ["Rosa Richter"],
-      licenses: ["MIT"],
+      licenses: ["MIT", "CC-BY-4.0", "CC0-1.0"],
       links: %{
         "Github" => "https://github.com/Cantido/int_set",
         "Sponsor" => "https://liberapay.com/rosa"
