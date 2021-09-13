@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Copyright headers are now on all files, following the [REUSE Specification](https://reuse.software).
 
+### Changed
+- The project now uses [Earthly](https://earthly.dev) for CI.
+  You can run the entire CI pipeline on your local machine by installing Earthly and running `earthly +all`.
+
 ## [1.5.1] - 2021-09-12
 ### Added
 - Sponshorship link to `mix.exs`
