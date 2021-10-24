@@ -1,12 +1,7 @@
-<!--
-SPDX-FileCopyrightText: 2021 Rosa Richter
-
-SPDX-License-Identifier: MIT
--->
 
 # Benchmark
 
-Benchmark run from 2020-10-13 14:44:05.535000Z UTC
+Benchmark run from 2021-10-24 06:44:23.421600Z UTC
 
 ## System
 
@@ -15,22 +10,22 @@ Benchmark suite executing on the following system:
 <table style="width: 1%">
   <tr>
     <th style="width: 1%; white-space: nowrap">Operating System</th>
-    <td>Windows</td>
+    <td>macOS</td>
   </tr><tr>
     <th style="white-space: nowrap">CPU Information</th>
-    <td style="white-space: nowrap">Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz</td>
+    <td style="white-space: nowrap">Apple M1</td>
   </tr><tr>
     <th style="white-space: nowrap">Number of Available Cores</th>
     <td style="white-space: nowrap">8</td>
   </tr><tr>
     <th style="white-space: nowrap">Available Memory</th>
-    <td style="white-space: nowrap">15.94 GB</td>
+    <td style="white-space: nowrap">16 GB</td>
   </tr><tr>
     <th style="white-space: nowrap">Elixir Version</th>
-    <td style="white-space: nowrap">1.11.0</td>
+    <td style="white-space: nowrap">1.12.2</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">21.3</td>
+    <td style="white-space: nowrap">24.1</td>
   </tr>
 </table>
 
@@ -71,39 +66,39 @@ Run Time
   </tr>
 
   <tr>
-    <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
-    <td style="white-space: nowrap; text-align: right">6.74 M</td>
-    <td style="white-space: nowrap; text-align: right">148.40 ns</td>
-    <td style="white-space: nowrap; text-align: right">±48.47%</td>
-    <td style="white-space: nowrap; text-align: right">145 ns</td>
-    <td style="white-space: nowrap; text-align: right">305 ns</td>
-  </tr>
-
-  <tr>
-    <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
-    <td style="white-space: nowrap; text-align: right">6.48 M</td>
-    <td style="white-space: nowrap; text-align: right">154.32 ns</td>
-    <td style="white-space: nowrap; text-align: right">±266.67%</td>
-    <td style="white-space: nowrap; text-align: right">0 ns</td>
-    <td style="white-space: nowrap; text-align: right">1585 ns</td>
-  </tr>
-
-  <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with existing member</td>
-    <td style="white-space: nowrap; text-align: right">4.47 M</td>
-    <td style="white-space: nowrap; text-align: right">223.56 ns</td>
-    <td style="white-space: nowrap; text-align: right">±39.78%</td>
-    <td style="white-space: nowrap; text-align: right">145 ns</td>
-    <td style="white-space: nowrap; text-align: right">455 ns</td>
+    <td style="white-space: nowrap; text-align: right">6.82 M</td>
+    <td style="white-space: nowrap; text-align: right">146.56 ns</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;8914.72%</td>
+    <td style="white-space: nowrap; text-align: right">0 ns</td>
+    <td style="white-space: nowrap; text-align: right">990 ns</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with nonexisting member</td>
-    <td style="white-space: nowrap; text-align: right">4.18 M</td>
-    <td style="white-space: nowrap; text-align: right">239.30 ns</td>
-    <td style="white-space: nowrap; text-align: right">±207.01%</td>
+    <td style="white-space: nowrap; text-align: right">6.47 M</td>
+    <td style="white-space: nowrap; text-align: right">154.60 ns</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;8964.46%</td>
     <td style="white-space: nowrap; text-align: right">0 ns</td>
-    <td style="white-space: nowrap; text-align: right">1585 ns</td>
+    <td style="white-space: nowrap; text-align: right">990 ns</td>
+  </tr>
+
+  <tr>
+    <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
+    <td style="white-space: nowrap; text-align: right">4.84 M</td>
+    <td style="white-space: nowrap; text-align: right">206.49 ns</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;18032.61%</td>
+    <td style="white-space: nowrap; text-align: right">0 ns</td>
+    <td style="white-space: nowrap; text-align: right">990 ns</td>
+  </tr>
+
+  <tr>
+    <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
+    <td style="white-space: nowrap; text-align: right">4.67 M</td>
+    <td style="white-space: nowrap; text-align: right">214.24 ns</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;18249.08%</td>
+    <td style="white-space: nowrap; text-align: right">0 ns</td>
+    <td style="white-space: nowrap; text-align: right">990 ns</td>
   </tr>
 
 </table>
@@ -117,27 +112,27 @@ Comparison
     <th style="text-align: right">IPS</th>
     <th style="text-align: right">Slower</th>
   <tr>
-    <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
-    <td style="white-space: nowrap;text-align: right">6.74 M</td>
+    <td style="white-space: nowrap">Enum.member? IntSet with existing member</td>
+    <td style="white-space: nowrap;text-align: right">6.82 M</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
-    <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
-    <td style="white-space: nowrap; text-align: right">6.48 M</td>
-    <td style="white-space: nowrap; text-align: right">1.04x</td>
-  </tr>
-
-  <tr>
-    <td style="white-space: nowrap">Enum.member? IntSet with existing member</td>
-    <td style="white-space: nowrap; text-align: right">4.47 M</td>
-    <td style="white-space: nowrap; text-align: right">1.51x</td>
-  </tr>
-
-  <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with nonexisting member</td>
-    <td style="white-space: nowrap; text-align: right">4.18 M</td>
-    <td style="white-space: nowrap; text-align: right">1.61x</td>
+    <td style="white-space: nowrap; text-align: right">6.47 M</td>
+    <td style="white-space: nowrap; text-align: right">1.05x</td>
+  </tr>
+
+  <tr>
+    <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
+    <td style="white-space: nowrap; text-align: right">4.84 M</td>
+    <td style="white-space: nowrap; text-align: right">1.41x</td>
+  </tr>
+
+  <tr>
+    <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
+    <td style="white-space: nowrap; text-align: right">4.67 M</td>
+    <td style="white-space: nowrap; text-align: right">1.46x</td>
   </tr>
 
 </table>
@@ -150,40 +145,30 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
-  <tr>
-    <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
-    <td style="white-space: nowrap">24 B</td>
-
-      <td>&nbsp;</td>
-
-  </tr>
-
-  <tr>
-    <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
-    <td style="white-space: nowrap">24 B</td>
-    <td>1.0x</td>
-  </tr>
-
   <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with existing member</td>
-    <td style="white-space: nowrap">120 B</td>
-    <td>5.0x</td>
+    <td style="white-space: nowrap">104 B</td>
+    <td>&nbsp;</td>
   </tr>
-
-  <tr>
+    <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with nonexisting member</td>
-    <td style="white-space: nowrap">120 B</td>
-    <td>5.0x</td>
+    <td style="white-space: nowrap">104 B</td>
+    <td>1.0x</td>
   </tr>
-
+    <tr>
+    <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
+    <td style="white-space: nowrap">24 B</td>
+    <td>0.23x</td>
+  </tr>
+    <tr>
+    <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
+    <td style="white-space: nowrap">24 B</td>
+    <td>0.23x</td>
+  </tr>
 </table>
 
-
-<hr/>
 
 
 __Input: Small (1 Thousand)__
@@ -202,38 +187,38 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
-    <td style="white-space: nowrap; text-align: right">6.55 M</td>
-    <td style="white-space: nowrap; text-align: right">152.72 ns</td>
-    <td style="white-space: nowrap; text-align: right">±50.15%</td>
-    <td style="white-space: nowrap; text-align: right">145 ns</td>
-    <td style="white-space: nowrap; text-align: right">305 ns</td>
+    <td style="white-space: nowrap; text-align: right">6.94 M</td>
+    <td style="white-space: nowrap; text-align: right">143.99 ns</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;12046.30%</td>
+    <td style="white-space: nowrap; text-align: right">0 ns</td>
+    <td style="white-space: nowrap; text-align: right">990 ns</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
-    <td style="white-space: nowrap; text-align: right">6.13 M</td>
-    <td style="white-space: nowrap; text-align: right">163.26 ns</td>
-    <td style="white-space: nowrap; text-align: right">±258.42%</td>
+    <td style="white-space: nowrap; text-align: right">6.71 M</td>
+    <td style="white-space: nowrap; text-align: right">149.14 ns</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;10955.95%</td>
     <td style="white-space: nowrap; text-align: right">0 ns</td>
-    <td style="white-space: nowrap; text-align: right">1585 ns</td>
+    <td style="white-space: nowrap; text-align: right">990 ns</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with existing member</td>
-    <td style="white-space: nowrap; text-align: right">4.53 M</td>
-    <td style="white-space: nowrap; text-align: right">220.85 ns</td>
-    <td style="white-space: nowrap; text-align: right">±41.12%</td>
-    <td style="white-space: nowrap; text-align: right">145 ns</td>
-    <td style="white-space: nowrap; text-align: right">455 ns</td>
+    <td style="white-space: nowrap; text-align: right">6.49 M</td>
+    <td style="white-space: nowrap; text-align: right">154.20 ns</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;9050.71%</td>
+    <td style="white-space: nowrap; text-align: right">0 ns</td>
+    <td style="white-space: nowrap; text-align: right">990 ns</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with nonexisting member</td>
-    <td style="white-space: nowrap; text-align: right">4.42 M</td>
-    <td style="white-space: nowrap; text-align: right">226.14 ns</td>
-    <td style="white-space: nowrap; text-align: right">±41.99%</td>
-    <td style="white-space: nowrap; text-align: right">145 ns</td>
-    <td style="white-space: nowrap; text-align: right">455 ns</td>
+    <td style="white-space: nowrap; text-align: right">6.46 M</td>
+    <td style="white-space: nowrap; text-align: right">154.72 ns</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;9276.11%</td>
+    <td style="white-space: nowrap; text-align: right">0 ns</td>
+    <td style="white-space: nowrap; text-align: right">990 ns</td>
   </tr>
 
 </table>
@@ -248,26 +233,26 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
-    <td style="white-space: nowrap;text-align: right">6.55 M</td>
+    <td style="white-space: nowrap;text-align: right">6.94 M</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
-    <td style="white-space: nowrap; text-align: right">6.13 M</td>
-    <td style="white-space: nowrap; text-align: right">1.07x</td>
+    <td style="white-space: nowrap; text-align: right">6.71 M</td>
+    <td style="white-space: nowrap; text-align: right">1.04x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with existing member</td>
-    <td style="white-space: nowrap; text-align: right">4.53 M</td>
-    <td style="white-space: nowrap; text-align: right">1.45x</td>
+    <td style="white-space: nowrap; text-align: right">6.49 M</td>
+    <td style="white-space: nowrap; text-align: right">1.07x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with nonexisting member</td>
-    <td style="white-space: nowrap; text-align: right">4.42 M</td>
-    <td style="white-space: nowrap; text-align: right">1.48x</td>
+    <td style="white-space: nowrap; text-align: right">6.46 M</td>
+    <td style="white-space: nowrap; text-align: right">1.07x</td>
   </tr>
 
 </table>
@@ -280,38 +265,28 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
   <tr>
     <td style="white-space: nowrap">Enum.member? MapSet with nonexisting member</td>
     <td style="white-space: nowrap">24 B</td>
-
-      <td>&nbsp;</td>
-
+    <td>&nbsp;</td>
   </tr>
-
-  <tr>
+    <tr>
     <td style="white-space: nowrap">Enum.member? MapSet with existing member</td>
     <td style="white-space: nowrap">24 B</td>
     <td>1.0x</td>
   </tr>
-
-  <tr>
+    <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with existing member</td>
-    <td style="white-space: nowrap">120 B</td>
-    <td>5.0x</td>
+    <td style="white-space: nowrap">104 B</td>
+    <td>4.33x</td>
   </tr>
-
-  <tr>
+    <tr>
     <td style="white-space: nowrap">Enum.member? IntSet with nonexisting member</td>
-    <td style="white-space: nowrap">120 B</td>
-    <td>5.0x</td>
+    <td style="white-space: nowrap">104 B</td>
+    <td>4.33x</td>
   </tr>
-
 </table>
 
-
-<hr/>
 
