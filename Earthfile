@@ -37,6 +37,9 @@ build:
 check:
   FROM +build
 
+  COPY README.md .
+  COPY CHANGELOG.md .
+
   RUN mix check --except reuse
 
 lint-copyright:
