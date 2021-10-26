@@ -6,7 +6,7 @@ ARG MIX_ENV=dev
 
 all:
   BUILD +check
-  BUILD +lint-licenses
+  BUILD +lint-copyright
 
 get-deps:
   FROM elixir:1.12-alpine
