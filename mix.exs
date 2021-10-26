@@ -35,7 +35,8 @@ defmodule IntSet.MixProject do
       {:stream_data, "~> 0.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:hex_licenses, "~> 0.2", only: :dev}
+      {:hex_licenses, "~> 0.2", only: :dev},
+      {:ex_check, "~> 0.14.0", only: [:dev], runtime: false}
     ]
   end
 

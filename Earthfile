@@ -5,11 +5,8 @@
 ARG MIX_ENV=dev
 
 all:
-  BUILD +lint
-  BUILD +lint-copyright
+  BUILD +check
   BUILD +lint-licenses
-  BUILD +lint-formatting
-  BUILD +test
 
 get-deps:
   FROM elixir:1.12-alpine
@@ -37,10 +34,10 @@ build:
 
   SAVE ARTIFACT _build/$MIX_ENV AS LOCAL ./_build/$MIX_ENV
 
-lint:
+check:
   FROM +build
 
-  RUN MIX_ENV=$MIX_ENV mix credo list
+  RUN mix check --except reuse
 
 lint-copyright:
   FROM fsfe/reuse
@@ -48,24 +45,3 @@ lint-copyright:
   COPY . .
 
   RUN reuse lint
-
-lint-licenses:
-  FROM +build
-
-  COPY LICENSES ./LICENSES
-
-  RUN mix licenses.lint --reuse
-
-lint-formatting:
-  FROM +build
-
-  COPY .formatter.exs .
-
-  RUN mix format --check-formatted
-
-test:
-  FROM --build-arg MIX_ENV=test +build
-
-  COPY test ./test
-
-  RUN MIX_ENV=test mix test
