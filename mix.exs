@@ -42,7 +42,7 @@ defmodule IntSet.MixProject do
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSE", "benchmarks"],
+      files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSES/*"],
       maintainers: ["Rosa Richter"],
       licenses: ["MIT", "CC-BY-4.0", "CC0-1.0"],
       links: %{

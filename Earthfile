@@ -39,6 +39,8 @@ check:
 
   COPY README.md .
   COPY CHANGELOG.md .
+  COPY CONTRIBUTING.md .
+  COPY code_of_conduct.md .
 
   RUN mix check --except reuse
 
