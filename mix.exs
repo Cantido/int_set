@@ -36,7 +36,8 @@ defmodule IntSet.MixProject do
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:hex_licenses, "~> 0.2", only: :dev},
-      {:ex_check, "~> 0.14.0", only: [:dev], runtime: false}
+      {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},
+      {:doctor, ">= 0.0.0", only: [:dev], runtime: false}
     ]
   end
 

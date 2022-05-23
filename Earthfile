@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+VERSION 0.6
+
 ARG MIX_ENV=dev
 
 all:
@@ -40,7 +42,10 @@ check:
   COPY README.md .
   COPY CHANGELOG.md .
   COPY CONTRIBUTING.md .
+  COPY --dir LICENSES .
   COPY code_of_conduct.md .
+  COPY .doctor.exs .
+  COPY .check.exs .
 
   RUN mix check --except reuse
 
