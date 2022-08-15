@@ -5,13 +5,25 @@
 VERSION 0.6
 
 ARG MIX_ENV=dev
+ARG ELIXIR_VERSION=1.13
 
 all:
-  BUILD +check
+  BUILD +check \
+    --ELIXIR_VERSION=1.14 \
+    --ELIXIR_VERSION=1.13 \
+    --ELIXIR_VERSION=1.12 \
+    --ELIXIR_VERSION=1.11 \
+    --ELIXIR_VERSION=1.10 \
+    --ELIXIR_VERSION=1.9 \
+    --ELIXIR_VERSION=1.8 \
+    --ELIXIR_VERSION=1.7 \
+    --ELIXIR_VERSION=1.6
+
   BUILD +lint-copyright
 
 get-deps:
-  FROM elixir:1.12-alpine
+  FROM elixir:${ELIXIR_VERSION}-alpine
+
   WORKDIR /app
   RUN mix do local.rebar --force, local.hex --force
   COPY mix.exs .
