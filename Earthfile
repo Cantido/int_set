@@ -11,13 +11,7 @@ all:
   BUILD +check \
     --ELIXIR_VERSION=1.14 \
     --ELIXIR_VERSION=1.13 \
-    --ELIXIR_VERSION=1.12 \
-    --ELIXIR_VERSION=1.11 \
-    --ELIXIR_VERSION=1.10 \
-    --ELIXIR_VERSION=1.9 \
-    --ELIXIR_VERSION=1.8 \
-    --ELIXIR_VERSION=1.7 \
-    --ELIXIR_VERSION=1.6
+    --ELIXIR_VERSION=1.12
 
   BUILD +lint-copyright
 
