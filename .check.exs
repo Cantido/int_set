@@ -5,7 +5,6 @@
 [
   tools: [
     {:audit, "mix hex.audit"},
-    {:licenses, "mix licenses.lint --reuse"},
     {:reuse, ["reuse", "lint"]}
   ]
 ]

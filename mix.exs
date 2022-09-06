@@ -17,7 +17,7 @@ defmodule IntSet.MixProject do
       deps: deps(),
       docs: docs(),
       source_url: "https://github.com/Cantido/int_set",
-      dialyzer: [flags: ["-Wunmatched_returns", :error_handling, :race_conditions]]
+      dialyzer: [flags: ["-Wunmatched_returns", :error_handling]]
     ]
   end
 
@@ -35,7 +35,6 @@ defmodule IntSet.MixProject do
       {:stream_data, "~> 0.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:hex_licenses, "~> 0.2", only: :dev},
       {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},
       {:doctor, ">= 0.0.0", only: [:dev], runtime: false}
     ]

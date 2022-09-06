@@ -5,14 +5,15 @@
 VERSION 0.6
 
 ARG MIX_ENV=dev
-ARG ELIXIR_VERSION=1.13
+ARG ELIXIR_VERSION=1.14
 
 all:
-  BUILD +check \
+  BUILD +test \
     --ELIXIR_VERSION=1.14 \
     --ELIXIR_VERSION=1.13 \
     --ELIXIR_VERSION=1.12
 
+  BUILD +check
   BUILD +lint-copyright
 
 get-deps:
@@ -42,6 +43,11 @@ build:
 
   SAVE ARTIFACT _build/$MIX_ENV AS LOCAL ./_build/$MIX_ENV
 
+test:
+  FROM +build
+
+  RUN mix check --only test
+
 check:
   FROM +build
 
@@ -53,7 +59,7 @@ check:
   COPY .doctor.exs .
   COPY .check.exs .
 
-  RUN mix check --except reuse
+  RUN mix check --except reuse --except test
 
 lint-copyright:
   FROM fsfe/reuse
