@@ -11,10 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.5.2] - 2022-09-05
 ### Added
 - Copyright headers are now on all files, following the [REUSE Specification](https://reuse.software).
 
 ### Changed
+- Fixes for Elixir 1.14 deprecations
 - The project now uses [Earthly](https://earthly.dev) for CI.
   You can run the entire CI pipeline on your local machine by installing Earthly and running `earthly +all`.
 
