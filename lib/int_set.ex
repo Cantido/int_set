@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 defmodule IntSet do
-  use Bitwise
+  import Bitwise
 
   @moduledoc """
   Efficiently store and index a set of non-negative integers.
