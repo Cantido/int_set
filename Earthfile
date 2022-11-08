@@ -13,18 +13,23 @@ ARG MIX_ENV=dev
 ARG ELIXIR_VERSION=1.14
 
 all:
+  BUILD +all-test
+  BUILD +all-test-unlocked
+
+  BUILD +check
+  BUILD +lint-copyright
+
+all-test:
   BUILD +test \
     --ELIXIR_VERSION=1.14 \
     --ELIXIR_VERSION=1.13 \
     --ELIXIR_VERSION=1.12
 
+all-test-unlocked:
   BUILD +test-unlocked \
     --ELIXIR_VERSION=1.14 \
     --ELIXIR_VERSION=1.13 \
     --ELIXIR_VERSION=1.12
-
-  BUILD +check
-  BUILD +lint-copyright
 
 get-deps:
   FROM elixir:${ELIXIR_VERSION}-alpine
