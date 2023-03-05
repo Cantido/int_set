@@ -8,11 +8,10 @@ defmodule IntSetDifferenceTest do
 
   describe "IntSet.difference/2" do
     property "All members from subtrahend are removed from minuend" do
-      check all list1 <- list_of(positive_integer(), max_tries: 100),
-                list2 <- list_of(positive_integer(), max_tries: 100),
+      check all list1 <- list_of(positive_integer()),
+                list2 <- list_of(positive_integer()),
                 minuend = IntSet.new(list1),
-                subtrahend = IntSet.new(list2),
-                max_runs: 1000 do
+                subtrahend = IntSet.new(list2) do
         difference = IntSet.difference(minuend, subtrahend)
 
         Enum.each(subtrahend, fn i ->

@@ -11,6 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Inspecting an IntSet now returns a string using `IntString.new([1, 2, 3, ...])` syntax.
+- The internal binary that IntSet uses to store values is now always byte-aligned.
+- Binaries returned by `IntSet.bitstring/1` is now always byte-aligned.
+
+### Removed
+- The `byte_align` option for `IntSet.bitstring/1` was removed.
 
 ## [1.5.2] - 2022-09-05
 ### Added

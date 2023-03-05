@@ -10,8 +10,8 @@ defmodule IntSet do
 
   A set can be constructed using `IntSet.new/0`:
 
-      iex> IntSet.new
-      #IntSet<[]>
+      iex> IntSet.new()
+      IntSet.new([])
 
   An `IntSet` obeys the same set semantics as `MapSet`, and provides
   constant-time operations for insertion, deletion, and membership checking.
@@ -24,23 +24,17 @@ defmodule IntSet do
   that a list can:
 
       iex> Enum.into([1, 2, 3], IntSet.new())
-      #IntSet<[1, 2, 3]>
-
-  The `inspect/1` implementation for `IntSet` sorts the members, which makes
-  it way easier to write doctests:
-
-      iex> IntSet.new([3, 1, 2])
-      #IntSet<[1, 2, 3]>
+      IntSet.new([1, 2, 3])
 
   Working with applications that use bitstrings becomes way easier,
   because `IntSet.new/1` accepts a bitstring,
   and `IntSet.bitstring/2` can return one.
 
       iex> IntSet.new(5) |> IntSet.bitstring()
-      <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1>>
+      <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1, 0::1, 0::1>>
 
       iex> IntSet.new(<<0::1, 0::1, 0::1, 0::1, 0::1, 1::1>>)
-      #IntSet<[5]>
+      IntSet.new([5])
 
   ## Performance
 
@@ -68,13 +62,11 @@ defmodule IntSet do
 
   With the use of `IntSet.bitstring/2`, and `IntSet.new/1`,
   you can serialize this collection very efficiently.
-  Remember to pass the `byte_align: true` option into `IntSet.bitstring/2` when you do this;
-  most encoding schemes like byte-aligned data.
 
-      iex> IntSet.new([4, 8, 15, 16, 23, 42]) |> IntSet.bitstring(byte_align: true) |> Base.encode16()
+      iex> IntSet.new([4, 8, 15, 16, 23, 42]) |> IntSet.bitstring() |> Base.encode16()
       "088181000020"
       iex> Base.decode16!("088181000020") |> IntSet.new()
-      #IntSet<[4, 8, 15, 16, 23, 42]>
+      IntSet.new([4, 8, 15, 16, 23, 42])
 
   """
   @moduledoc since: "1.0.0"
@@ -95,7 +87,7 @@ defmodule IntSet do
   ## Examples
 
       iex> IntSet.new
-      #IntSet<[]>
+      IntSet.new([])
 
   """
   @doc since: "1.0.0"
@@ -107,32 +99,30 @@ defmodule IntSet do
   @doc """
   Create an int set with some starting value.
 
-
-
   ## Examples
 
   You can create a set with a single starting value.
 
       iex> IntSet.new(0)
-      #IntSet<[0]>
+      IntSet.new([0])
 
   You can also provide an enumerable of integers to start with.
 
       iex> IntSet.new([1, 2, 3])
-      #IntSet<[1, 2, 3]>
+      IntSet.new([1, 2, 3])
 
   Lastly, you can initialize the set with a bit string.
   Binary strings are interpreted as little-endian, with the very first bit
   of the string representing the number zero.
 
       iex> IntSet.new(<<1 :: 1>>)
-      #IntSet<[0]>
+      IntSet.new([0])
 
       iex> IntSet.new(<<0b1000_1000>>)
-      #IntSet<[0, 4]>
+      IntSet.new([0, 4])
 
       iex> IntSet.new(<<0 :: 1>>)
-      #IntSet<[]>
+      IntSet.new([])
 
   """
   @doc since: "1.0.0"
@@ -140,7 +130,7 @@ defmodule IntSet do
   def new(members)
 
   def new(bitstring) when is_bitstring(bitstring) do
-    %IntSet{s: bitstring}
+    normalize(%IntSet{s: bitstring})
   end
 
   def new(int) when is_index(int) do
@@ -149,7 +139,7 @@ defmodule IntSet do
 
   def new(enum) do
     list = enum |> Enum.sort() |> Enum.uniq()
-    %IntSet{s: seqput(<<>>, list)}
+    normalize(%IntSet{s: seqput(<<>>, list)})
   end
 
   defp seqput(bits, []) when is_bitstring(bits) do
@@ -172,16 +162,16 @@ defmodule IntSet do
   ## Examples
 
       iex> IntSet.new(0) |> IntSet.inverse(1)
-      #IntSet<[]>
+      IntSet.new([])
 
       iex> IntSet.new(0) |> IntSet.inverse(8)
-      #IntSet<[1, 2, 3, 4, 5, 6, 7]>
+      IntSet.new([1, 2, 3, 4, 5, 6, 7])
 
       iex> IntSet.new() |> IntSet.inverse(3)
-      #IntSet<[0, 1, 2]>
+      IntSet.new([0, 1, 2])
 
       iex> IntSet.new() |> IntSet.inverse(9)
-      #IntSet<[0, 1, 2, 3, 4, 5, 6, 7, 8]>
+      IntSet.new([0, 1, 2, 3, 4, 5, 6, 7, 8])
   """
   @doc since: "1.4.0"
   @spec inverse(t, non_neg_integer) :: t
@@ -194,7 +184,7 @@ defmodule IntSet do
     <<a::unsigned-big-integer-size(n), _rest::bits-size(waste_bits)>> =
       <<bnot(a)::size(padded_bits)>>
 
-    %IntSet{s: <<a::unsigned-big-integer-size(n)>>}
+    normalize(%IntSet{s: <<a::unsigned-big-integer-size(n)>>})
   end
 
   @doc """
@@ -205,7 +195,7 @@ defmodule IntSet do
       iex> a = IntSet.new(7)
       iex> b = IntSet.new(4)
       iex> IntSet.union(a, b)
-      #IntSet<[4, 7]>
+      IntSet.new([4, 7])
 
   """
   @doc since: "1.0.0"
@@ -213,7 +203,7 @@ defmodule IntSet do
   def union(x, y)
 
   def union(%IntSet{s: a}, %IntSet{s: b}) do
-    %IntSet{s: bitwise_bits(&bor/2, a, b)}
+    normalize(%IntSet{s: bitwise_bits(&bor/2, a, b)})
   end
 
   @doc """
@@ -222,7 +212,7 @@ defmodule IntSet do
   ## Examples
 
       iex> IntSet.difference(IntSet.new([1, 2]), IntSet.new([2, 3, 4]))
-      #IntSet<[1]>
+      IntSet.new([1])
 
   """
   @doc since: "1.2.0"
@@ -230,7 +220,7 @@ defmodule IntSet do
   def difference(int_set1, int_set2)
 
   def difference(%IntSet{s: a}, %IntSet{s: b}) do
-    %IntSet{s: bitwise_bits(&bdiff/2, a, b)}
+    normalize(%IntSet{s: bitwise_bits(&bdiff/2, a, b)})
   end
 
   defp bdiff(a, b) when is_number(a) and is_number(b) do
@@ -242,7 +232,6 @@ defmodule IntSet do
   end
 
   defp bitwise_bits(fun, a, b) do
-    # IO.puts "bitwise op on byte-lengths of #{byte_size(a)} and #{byte_size(b)}"
     max_bytes = max(byte_size(a), byte_size(b))
     max_bits = max_bytes * 8
 
@@ -269,10 +258,10 @@ defmodule IntSet do
   ## Examples
 
       iex> IntSet.intersection(IntSet.new([1, 2]), IntSet.new([2, 3, 4]))
-      #IntSet<[2]>
+      IntSet.new([2])
 
       iex> IntSet.intersection(IntSet.new([1, 2]), IntSet.new([3, 4]))
-      #IntSet<[]>
+      IntSet.new([])
   """
   @doc since: "1.3.0"
   @spec intersection(t, t) :: t
@@ -282,7 +271,7 @@ defmodule IntSet do
   def intersection(%IntSet{s: _}, %IntSet{s: <<>>}), do: IntSet.new()
 
   def intersection(%IntSet{s: a}, %IntSet{s: b}) do
-    %IntSet{s: bitwise_bits(&band/2, a, b)}
+    normalize(%IntSet{s: bitwise_bits(&band/2, a, b)})
   end
 
   @doc """
@@ -316,9 +305,9 @@ defmodule IntSet do
   ## Examples
 
       iex> set = IntSet.new()
-      #IntSet<[]>
+      IntSet.new([])
       iex> IntSet.put(set, 0)
-      #IntSet<[0]>
+      IntSet.new([0])
 
   """
   @doc since: "1.0.0"
@@ -326,7 +315,7 @@ defmodule IntSet do
   def put(s, x)
 
   def put(%IntSet{s: s} = set, x) when is_index(x) and is_bitstring(s) do
-    set_bit(set, x, 1)
+    normalize(set_bit(set, x, 1))
   end
 
   @doc """
@@ -335,9 +324,9 @@ defmodule IntSet do
   ## Examples
 
       iex> set = IntSet.new(5)
-      #IntSet<[5]>
+      IntSet.new([5])
       iex> IntSet.delete(set, 5)
-      #IntSet<[]>
+      IntSet.new([])
 
   """
   @doc since: "1.0.0"
@@ -350,7 +339,7 @@ defmodule IntSet do
   end
 
   def delete(%IntSet{s: s} = set, x) when can_contain(s, x) do
-    set_bit(set, x, 0)
+    normalize(set_bit(set, x, 0))
   end
 
   @spec set_bit(t, non_neg_integer, 0 | 1) :: t
@@ -444,33 +433,45 @@ defmodule IntSet do
   ## Examples
 
       iex> IntSet.new(0) |> IntSet.bitstring()
-      <<1::1>>
+      <<128>>
 
       iex> IntSet.new(5) |> IntSet.bitstring()
-      <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1>>
+      <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1, 0::1, 0::1>>
 
       iex> IntSet.new() |> IntSet.bitstring()
       <<>>
-
-  You can also provide a `:byte_align` option,
-  which will pad the end of the binary with zeroes until you're at a nice round n-byte size.
-  By default this options is `false`.
-
-      iex> IntSet.new(5) |> IntSet.bitstring(byte_align: true)
-      <<0::1, 0::1, 0::1, 0::1, 0::1, 1::1, 0::1, 0::1>>
-
   """
   @doc since: "1.1.0"
   @spec bitstring(t) :: bitstring
-  def bitstring(%IntSet{s: s}, opts \\ []) do
-    if Keyword.get(opts, :byte_align, false) do
+  def bitstring(%IntSet{s: s}) do
+    s
+  end
+
+  defp normalize(%IntSet{s: s}) do
+    s =
       byte_align(s)
+      |> trim_trailing_zeroes()
+
+    %IntSet{s: s}
+  end
+
+  defp trim_trailing_zeroes(<<>>), do: <<>>
+
+  defp trim_trailing_zeroes(bin) when is_binary(bin) do
+    if binary_slice(bin, -1..-1) == <<0>> do
+      size = byte_size(bin)
+
+      trim_trailing_zeroes(binary_part(bin, 0, size - 1))
     else
-      s
+      bin
     end
   end
 
-  defp byte_align(bin) do
+  defp byte_align(<<>>), do: <<>>
+
+  defp byte_align(bin) when is_binary(bin), do: bin
+
+  defp byte_align(bin) when is_bitstring(bin) do
     bits_to_add = 8 - Integer.mod(bit_size(bin), 8)
     <<bin::bitstring, 0::size(bits_to_add)>>
   end
@@ -479,8 +480,8 @@ defmodule IntSet do
     import Inspect.Algebra
 
     def inspect(s, opts) do
-      int_list = Enum.into(s, []) |> Enum.sort()
-      concat(["#IntSet<", to_doc(int_list, %{opts | charlists: :as_lists}), ">"])
+      int_list = Enum.into(s, []) |> Enum.reverse()
+      concat(["IntSet.new(", to_doc(int_list, %{opts | charlists: :as_lists}), ")"])
     end
   end
 
@@ -521,30 +522,29 @@ defmodule IntSet do
       {:error, __MODULE__}
     end
 
-    def reduce(_, {:halt, acc}, _fun) do
-      {:halted, acc}
+    def reduce(%IntSet{s: s}, acc, fun) do
+      reduce(to_list(0, s), acc, fun)
     end
 
-    def reduce(set, {:suspend, acc}, fun) do
-      {:suspended, acc, &reduce(set, &1, fun)}
+    def reduce(_list, {:halt, acc}, _fun), do: {:halted, acc}
+    def reduce(list, {:suspend, acc}, fun), do: {:suspended, acc, &reduce(list, &1, fun)}
+    def reduce([], {:cont, acc}, _fun), do: {:done, acc}
+    def reduce([head | tail], {:cont, acc}, fun), do: reduce(tail, fun.(head, acc), fun)
+
+    defp to_list(offset, bin) do
+      do_to_list(offset, bin, [])
     end
 
-    def reduce(%IntSet{s: <<>>}, {:cont, acc}, _fun) do
-      {:done, acc}
+    defp do_to_list(_offset, <<>>, acc) do
+      acc
     end
 
-    def reduce(%IntSet{s: s}, {:cont, acc}, fun) do
-      last_i = bit_size(s) - 1
-      before_last_size = last_i
-      <<h::bitstring-size(before_last_size), last_flag::1>> = s
+    defp do_to_list(offset, <<1::1, rest::bitstring>>, acc) do
+      do_to_list(offset + 1, rest, [offset | acc])
+    end
 
-      rest = IntSet.new(h)
-
-      if last_flag == 1 do
-        reduce(rest, fun.(last_i, acc), fun)
-      else
-        reduce(rest, {:cont, acc}, fun)
-      end
+    defp do_to_list(offset, <<0::1, rest::bitstring>>, acc) do
+      do_to_list(offset + 1, rest, acc)
     end
   end
 end
