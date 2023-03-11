@@ -458,9 +458,9 @@ defmodule IntSet do
   defp trim_trailing_zeroes(<<>>), do: <<>>
 
   defp trim_trailing_zeroes(bin) when is_binary(bin) do
-    if binary_slice(bin, -1..-1) == <<0>> do
-      size = byte_size(bin)
+    size = byte_size(bin)
 
+    if binary_part(bin, size - 1, 1) == <<0>> do
       trim_trailing_zeroes(binary_part(bin, 0, size - 1))
     else
       bin
