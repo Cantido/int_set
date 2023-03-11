@@ -40,8 +40,8 @@ but you're only allowed to put positive integers (including zero) into the set.
 A set can be constructed using `IntSet.new/0`:
 
 ```elixir
-iex> IntSet.new
-#IntSet<[]>
+iex> IntSet.new()
+IntSet.new([])
 ```
 
 An `IntSet` obeys the same set semantics as `MapSet`, and provides
@@ -58,7 +58,7 @@ that a list can:
 
 ```elixir
 iex> Enum.into([1, 2, 3], IntSet.new())
-#IntSet<[1, 2, 3]>
+IntSet.new([1, 2, 3])
 ```
 
 The `inspect/1` implementation for `IntSet` sorts the members, which makes
@@ -66,7 +66,7 @@ it way easier to write doctests:
 
 ```elixir
 iex> IntSet.new([3, 1, 2])
-#IntSet<[1, 2, 3]>
+IntSet.new([1, 2, 3])
 ```
 
 Working with applications that use bitstrings becomes way easier,
@@ -75,21 +75,19 @@ and `IntSet.bitstring/2` can return one.
 
 ```elixir
 iex> IntSet.new(5) |> IntSet.bitstring()
-<<0::1, 0::1, 0::1, 0::1, 0::1, 1::1>>
+<<4>>
 
 iex> IntSet.new(<<0::1, 0::1, 0::1, 0::1, 0::1, 1::1>>)
-#IntSet<[5]>
+IntSet.new([5])
 ```
 
 This also means that an `IntSet` can be really efficiently serialized with the use of `IntSet.bitstring/2`, and `IntSet.new/1`.
-Remember to pass the `byte_align: true` option into `IntSet.bitstring/2` when you do this;
-most encoding schemes like byte-aligned data.
 
 ```elixir
-iex> IntSet.new([4, 8, 15, 16, 23, 42]) |> IntSet.bitstring(byte_align: true) |> Base.encode16()
+iex> IntSet.new([4, 8, 15, 16, 23, 42]) |> IntSet.bitstring() |> Base.encode16()
 "088181000020"
 iex> Base.decode16!("088181000020") |> IntSet.new()
-#IntSet<[4, 8, 15, 16, 23, 42]>
+IntSet.new([4, 8, 15, 16, 23, 42])
 ```
 
 ## Performance
