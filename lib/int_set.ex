@@ -133,6 +133,7 @@ defmodule IntSet do
       |> Enum.map(&reverse_bits/1)
       |> :binary.list_to_bin()
       |> trim_trailing_zeroes()
+
     %IntSet{s: set}
   end
 
@@ -187,7 +188,8 @@ defmodule IntSet do
 
     padded_set =
       if pad_bytes > 0 do
-        a <> <<0::size(pad_bytes*8)>>
+        pad_bits = pad_bytes * 8
+        a <> <<0::size(pad_bits)>>
       else
         a
       end
@@ -203,6 +205,7 @@ defmodule IntSet do
 
     if current_capacity > n do
       values_to_remove = current_capacity..n
+
       Enum.reduce(values_to_remove, set, fn val, set ->
         IntSet.delete(set, val)
       end)
@@ -231,6 +234,7 @@ defmodule IntSet do
       :binary.decode_unsigned(a, :little)
       |> Bitwise.bor(:binary.decode_unsigned(b, :little))
       |> :binary.encode_unsigned(:little)
+
     %IntSet{s: new_set}
   end
 
@@ -252,6 +256,7 @@ defmodule IntSet do
       :binary.decode_unsigned(a, :little)
       |> Bitwise.band(Bitwise.bnot(:binary.decode_unsigned(b, :little)))
       |> :binary.encode_unsigned(:little)
+
     %IntSet{s: new_set}
   end
 
@@ -278,6 +283,7 @@ defmodule IntSet do
       :binary.decode_unsigned(a, :little)
       |> Bitwise.band(:binary.decode_unsigned(b, :little))
       |> :binary.encode_unsigned(:little)
+
     %IntSet{s: new_set}
     |> normalize()
   end
@@ -324,6 +330,7 @@ defmodule IntSet do
       :binary.decode_unsigned(s, :little)
       |> Bitwise.bor(Bitwise.bsl(1, x))
       |> :binary.encode_unsigned(:little)
+
     %IntSet{s: set}
   end
 
@@ -351,6 +358,7 @@ defmodule IntSet do
       |> Bitwise.band(:binary.decode_unsigned(s, :little))
       |> :binary.encode_unsigned(:little)
       |> trim_trailing_zeroes()
+
     %IntSet{s: new_set}
   end
 
@@ -463,7 +471,6 @@ defmodule IntSet do
 
     def member?(%IntSet{s: s}, x)
         when is_index(x) and bit_size(s) > x do
-
       {:ok, Bitwise.band(:binary.decode_unsigned(s, :little), Bitwise.bsl(1, x)) > 0}
     end
 
@@ -499,6 +506,7 @@ defmodule IntSet do
     defp byte_to_list(byte, offset) do
       Enum.reduce(0..7, [], fn shift, acc ->
         selector = Bitwise.bsl(1, shift)
+
         if Bitwise.band(byte, selector) > 0 do
           [offset + shift | acc]
         else
