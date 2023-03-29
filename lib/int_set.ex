@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 defmodule IntSet do
-  import Bitwise
-
   @moduledoc """
   Efficiently store and index a set of non-negative integers.
 
@@ -73,7 +71,7 @@ defmodule IntSet do
 
   defstruct s: <<>>
 
-  @opaque t :: %__MODULE__{s: bitstring}
+  @opaque t :: %__MODULE__{s: binary()}
 
   defguardp is_index(i)
             when is_integer(i) and i >= 0
@@ -130,7 +128,12 @@ defmodule IntSet do
   def new(members)
 
   def new(bitstring) when is_bitstring(bitstring) do
-    normalize(%IntSet{s: bitstring})
+    set =
+      :binary.bin_to_list(byte_align(bitstring))
+      |> Enum.map(&reverse_bits/1)
+      |> :binary.list_to_bin()
+      |> trim_trailing_zeroes()
+    %IntSet{s: set}
   end
 
   def new(int) when is_index(int) do
@@ -138,19 +141,14 @@ defmodule IntSet do
   end
 
   def new(enum) do
-    list = enum |> Enum.sort() |> Enum.uniq()
-    normalize(%IntSet{s: seqput(<<>>, list)})
-  end
+    set_as_integer =
+      Enum.reduce(enum, 0, fn x, int ->
+        Bitwise.bsl(1, x)
+        |> Bitwise.bor(int)
+      end)
 
-  defp seqput(bits, []) when is_bitstring(bits) do
-    bits
-  end
-
-  defp seqput(bits, [next | rest])
-       when is_bitstring(bits) and is_integer(next) and bit_size(bits) <= next do
-    pad_bits = next - bit_size(bits)
-    new_bits = <<bits::bitstring, 0::size(pad_bits), 1::1>>
-    seqput(new_bits, rest)
+    %IntSet{s: :binary.encode_unsigned(set_as_integer, :little)}
+    |> normalize()
   end
 
   @doc """
@@ -176,15 +174,41 @@ defmodule IntSet do
   @doc since: "1.4.0"
   @spec inverse(t, non_neg_integer) :: t
   def inverse(%IntSet{s: a}, n) do
-    bytes = ceil(n / 8)
-    padded_bits = bytes * 8
-    waste_bits = padded_bits - n
-    <<a::unsigned-big-integer-size(padded_bits)>> = right_pad(a, bytes)
+    target_byte_count = div(n, 8)
 
-    <<a::unsigned-big-integer-size(n), _rest::bits-size(waste_bits)>> =
-      <<bnot(a)::size(padded_bits)>>
+    target_byte_count =
+      if rem(n, 8) > 0 do
+        target_byte_count + 1
+      else
+        target_byte_count
+      end
 
-    normalize(%IntSet{s: <<a::unsigned-big-integer-size(n)>>})
+    pad_bytes = target_byte_count - byte_size(a)
+
+    padded_set =
+      if pad_bytes > 0 do
+        a <> <<0::size(pad_bytes*8)>>
+      else
+        a
+      end
+
+    inverted_padded_set =
+      padded_set
+      |> :binary.bin_to_list()
+      |> Enum.map(fn bin -> Bitwise.bxor(bin, 255) end)
+
+    set = %IntSet{s: :binary.list_to_bin(inverted_padded_set)}
+
+    current_capacity = bit_size(set.s) - 1
+
+    if current_capacity > n do
+      values_to_remove = current_capacity..n
+      Enum.reduce(values_to_remove, set, fn val, set ->
+        IntSet.delete(set, val)
+      end)
+    else
+      set
+    end
   end
 
   @doc """
@@ -203,7 +227,11 @@ defmodule IntSet do
   def union(x, y)
 
   def union(%IntSet{s: a}, %IntSet{s: b}) do
-    normalize(%IntSet{s: bitwise_bits(&bor/2, a, b)})
+    new_set =
+      :binary.decode_unsigned(a, :little)
+      |> Bitwise.bor(:binary.decode_unsigned(b, :little))
+      |> :binary.encode_unsigned(:little)
+    %IntSet{s: new_set}
   end
 
   @doc """
@@ -220,36 +248,11 @@ defmodule IntSet do
   def difference(int_set1, int_set2)
 
   def difference(%IntSet{s: a}, %IntSet{s: b}) do
-    normalize(%IntSet{s: bitwise_bits(&bdiff/2, a, b)})
-  end
-
-  defp bdiff(a, b) when is_number(a) and is_number(b) do
-    band(a, bnot(b))
-  end
-
-  defp bitwise_bits(fun, <<>>, <<>>) do
-    <<fun.(0, 0)::8>>
-  end
-
-  defp bitwise_bits(fun, a, b) do
-    max_bytes = max(byte_size(a), byte_size(b))
-    max_bits = max_bytes * 8
-
-    <<abin::big-integer-size(max_bits)>> = right_pad(a, max_bytes)
-    <<bbin::big-integer-size(max_bits)>> = right_pad(b, max_bytes)
-    <<fun.(abin, bbin)::size(max_bits)>>
-  end
-
-  defp right_pad(bin, size_bytes)
-       when is_bitstring(bin) and is_integer(size_bytes) and size_bytes >= 0 do
-    target_bit_size = size_bytes * 8
-    pad_size = target_bit_size - bit_size(bin)
-
-    if pad_size > 0 do
-      <<bin::bitstring, 0::size(pad_size)>>
-    else
-      bin
-    end
+    new_set =
+      :binary.decode_unsigned(a, :little)
+      |> Bitwise.band(Bitwise.bnot(:binary.decode_unsigned(b, :little)))
+      |> :binary.encode_unsigned(:little)
+    %IntSet{s: new_set}
   end
 
   @doc """
@@ -271,7 +274,12 @@ defmodule IntSet do
   def intersection(%IntSet{s: _}, %IntSet{s: <<>>}), do: IntSet.new()
 
   def intersection(%IntSet{s: a}, %IntSet{s: b}) do
-    normalize(%IntSet{s: bitwise_bits(&band/2, a, b)})
+    new_set =
+      :binary.decode_unsigned(a, :little)
+      |> Bitwise.band(:binary.decode_unsigned(b, :little))
+      |> :binary.encode_unsigned(:little)
+    %IntSet{s: new_set}
+    |> normalize()
   end
 
   @doc """
@@ -293,10 +301,9 @@ defmodule IntSet do
   def disjoint?(%IntSet{s: _}, %IntSet{s: <<>>}), do: true
 
   def disjoint?(%IntSet{s: a}, %IntSet{s: b}) do
-    bitwise = bitwise_bits(&band/2, a, b)
-    len = bit_size(bitwise)
-
-    bitwise == <<0::size(len)>>
+    aint = :binary.decode_unsigned(a, :little)
+    bint = :binary.decode_unsigned(b, :little)
+    Bitwise.band(aint, bint) == 0
   end
 
   @doc """
@@ -312,10 +319,12 @@ defmodule IntSet do
   """
   @doc since: "1.0.0"
   @spec put(t, non_neg_integer) :: t
-  def put(s, x)
-
-  def put(%IntSet{s: s} = set, x) when is_index(x) and is_bitstring(s) do
-    normalize(set_bit(set, x, 1))
+  def put(%IntSet{s: s}, x) when is_index(x) and is_bitstring(s) do
+    set =
+      :binary.decode_unsigned(s, :little)
+      |> Bitwise.bor(Bitwise.bsl(1, x))
+      |> :binary.encode_unsigned(:little)
+    %IntSet{s: set}
   end
 
   @doc """
@@ -331,35 +340,18 @@ defmodule IntSet do
   """
   @doc since: "1.0.0"
   @spec delete(t, non_neg_integer) :: t
-  def delete(set, x)
-
-  def delete(%IntSet{s: s} = set, x)
-      when is_index(x) and is_bitstring(s) and not can_contain(s, x) do
+  def delete(%IntSet{s: s} = set, x) when not can_contain(s, x) do
     set
   end
 
-  def delete(%IntSet{s: s} = set, x) when can_contain(s, x) do
-    normalize(set_bit(set, x, 0))
-  end
-
-  @spec set_bit(t, non_neg_integer, 0 | 1) :: t
-  defp set_bit(%IntSet{} = set, i, x) when x in 0..1 do
-    %IntSet{s: s} = ensure_capacity_for(set, i)
-    <<pre::size(i), _::1, post::bitstring>> = s
-    %IntSet{s: <<pre::size(i), x::1, post::bitstring>>}
-  end
-
-  @spec ensure_capacity_for(t, non_neg_integer) :: t
-  defp ensure_capacity_for(s, x)
-
-  defp ensure_capacity_for(%IntSet{s: s} = set, x) when can_contain(s, x) do
-    set
-  end
-
-  defp ensure_capacity_for(%IntSet{s: s}, x) when is_index(x) and bit_size(s) <= x do
-    total_bits_needed = x + 1
-    bits_to_add = total_bits_needed - bit_size(s)
-    %IntSet{s: <<s::bitstring, 0::size(bits_to_add)>>}
+  def delete(%IntSet{s: s}, x) when can_contain(s, x) do
+    new_set =
+      Bitwise.bsl(1, x)
+      |> Bitwise.bnot()
+      |> Bitwise.band(:binary.decode_unsigned(s, :little))
+      |> :binary.encode_unsigned(:little)
+      |> trim_trailing_zeroes()
+    %IntSet{s: new_set}
   end
 
   @doc """
@@ -377,55 +369,8 @@ defmodule IntSet do
   def equal?(int_set1, int_set2)
 
   def equal?(%IntSet{s: a}, %IntSet{s: b}) do
-    equal_inner(a, b)
+    a == b
   end
-
-  # The choice of powers-of-two binary sizes was arbitrary.
-  # The choice to stop at 16 bytes was not.
-  # Performance testing indicates that performance maxes out and we start getting slower.
-  # Also, memory usage drops substantially: it drops to a quarter of what it was when we stop at 8 bytes!
-  # Caveat: This is probably only true for my machine (eight 64-bit cores)
-  defp equal_inner(
-         <<a::binary-size(16), arest::bitstring>>,
-         <<b::binary-size(16), brest::bitstring>>
-       )
-       when a == b,
-       do: equal_inner(arest, brest)
-
-  defp equal_inner(
-         <<a::binary-size(8), arest::bitstring>>,
-         <<b::binary-size(8), brest::bitstring>>
-       )
-       when a == b,
-       do: equal_inner(arest, brest)
-
-  defp equal_inner(
-         <<a::binary-size(4), arest::bitstring>>,
-         <<b::binary-size(4), brest::bitstring>>
-       )
-       when a == b,
-       do: equal_inner(arest, brest)
-
-  defp equal_inner(
-         <<a::binary-size(2), arest::bitstring>>,
-         <<b::binary-size(2), brest::bitstring>>
-       )
-       when a == b,
-       do: equal_inner(arest, brest)
-
-  defp equal_inner(<<a, arest::bitstring>>, <<b, brest::bitstring>>) when a == b,
-    do: equal_inner(arest, brest)
-
-  defp equal_inner(<<a::size(1), arest::bitstring>>, <<b::size(1), brest::bitstring>>)
-       when a == b,
-       do: equal_inner(arest, brest)
-
-  defp equal_inner(<<0::size(1), rest::bitstring>>, <<>>), do: equal_inner(rest, <<>>)
-  defp equal_inner(<<>>, <<0::size(1), rest::bitstring>>), do: equal_inner(rest, <<>>)
-
-  defp equal_inner(<<a::size(1)>>, <<b::size(1)>>) when a == b, do: true
-  defp equal_inner(<<>>, <<>>), do: true
-  defp equal_inner(_, _), do: false
 
   @doc """
   Get a bitstring representing the members of a set.
@@ -444,7 +389,15 @@ defmodule IntSet do
   @doc since: "1.1.0"
   @spec bitstring(t) :: bitstring
   def bitstring(%IntSet{s: s}) do
-    s
+    :binary.bin_to_list(s)
+    |> Enum.map(&reverse_bits/1)
+    |> :binary.list_to_bin()
+    |> trim_trailing_zeroes()
+  end
+
+  defp reverse_bits(byte) do
+    <<a::1, b::1, c::1, d::1, e::1, f::1, g::1, h::1>> = <<byte>>
+    <<h::1, g::1, f::1, e::1, d::1, c::1, b::1, a::1>>
   end
 
   defp normalize(%IntSet{s: s}) do
@@ -507,13 +460,11 @@ defmodule IntSet do
 
     def member?(%IntSet{}, x) when is_integer(x) and x < 0, do: {:ok, false}
     def member?(%IntSet{s: s}, x) when is_index(x) and bit_size(s) <= x, do: {:ok, false}
-    def member?(%IntSet{s: <<0::1, _rst::bitstring>>}, 0), do: {:ok, false}
-    def member?(%IntSet{s: <<1::1, _rst::bitstring>>}, 0), do: {:ok, true}
 
     def member?(%IntSet{s: s}, x)
         when is_index(x) and bit_size(s) > x do
-      <<_::size(x), i::1, _::bitstring>> = s
-      {:ok, i == 1}
+
+      {:ok, Bitwise.band(:binary.decode_unsigned(s, :little), Bitwise.bsl(1, x)) > 0}
     end
 
     def member?(%IntSet{}, _), do: {:error, __MODULE__}
@@ -523,7 +474,7 @@ defmodule IntSet do
     end
 
     def reduce(%IntSet{s: s}, acc, fun) do
-      reduce(to_list(0, s), acc, fun)
+      reduce(to_list(s), acc, fun)
     end
 
     def reduce(_list, {:halt, acc}, _fun), do: {:halted, acc}
@@ -531,20 +482,29 @@ defmodule IntSet do
     def reduce([], {:cont, acc}, _fun), do: {:done, acc}
     def reduce([head | tail], {:cont, acc}, fun), do: reduce(tail, fun.(head, acc), fun)
 
-    defp to_list(offset, bin) do
-      do_to_list(offset, bin, [])
+    require Logger
+
+    defp to_list(bin) do
+      :binary.bin_to_list(bin)
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {byte, i} ->
+        byte_to_list(byte, i * 8)
+      end)
     end
 
-    defp do_to_list(_offset, <<>>, acc) do
-      acc
+    defp byte_to_list(0, _) do
+      []
     end
 
-    defp do_to_list(offset, <<1::1, rest::bitstring>>, acc) do
-      do_to_list(offset + 1, rest, [offset | acc])
-    end
-
-    defp do_to_list(offset, <<0::1, rest::bitstring>>, acc) do
-      do_to_list(offset + 1, rest, acc)
+    defp byte_to_list(byte, offset) do
+      Enum.reduce(0..7, [], fn shift, acc ->
+        selector = Bitwise.bsl(1, shift)
+        if Bitwise.band(byte, selector) > 0 do
+          [offset + shift | acc]
+        else
+          acc
+        end
+      end)
     end
   end
 end
