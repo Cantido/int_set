@@ -6,7 +6,7 @@ defmodule IntSetIntersectTest do
   use ExUnit.Case, async: true
   use ExUnitProperties
 
-  describe "IntSet.difference/2" do
+  describe "IntSet.intersection/2" do
     property "All members from result are in both arguments" do
       check all list1 <- list_of(positive_integer(), max_tries: 100),
                 list2 <- list_of(positive_integer(), max_tries: 100),
