@@ -9,7 +9,7 @@ defmodule IntSet.MixProject do
     [
       name: "IntSet",
       app: :int_set,
-      version: "1.5.2",
+      version: "2.0.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       description: "A time- and memory-efficient unordered data structure for positive integers.",
