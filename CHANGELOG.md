@@ -11,13 +11,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.0.0] - 2023-03-29
+
 ### Changed
 - Inspecting an IntSet now returns a string using `IntString.new([1, 2, 3, ...])` syntax.
-- The internal binary that IntSet uses to store values is now always byte-aligned.
+- The internal binary that IntSet uses to store values is now always byte-aligned,
+  and each byte has changed endianness to allow for some internal optimizations.
 - Binaries returned by `IntSet.bitstring/1` is now always byte-aligned.
 
 ### Removed
-- The `byte_align` option for `IntSet.bitstring/1` was removed.
+- BREAKING: The `byte_align` option for `IntSet.bitstring/1` was removed.
 
 ## [1.5.2] - 2022-09-05
 ### Added
@@ -106,7 +110,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - An implementation of `Collectable`.
 - An implementation of `Enumerable`.
 
-[Unreleased]: https://github.com/Cantido/int_set/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/Cantido/int_set/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/Cantido/int_set/compare/v1.5.2...v2.0.0
+[1.5.2]: https://github.com/Cantido/int_set/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/Cantido/int_set/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/Cantido/int_set/compare/v1.4.2...v1.5.0
 [1.4.2]: https://github.com/Cantido/int_set/compare/v1.4.1...v1.4.2
