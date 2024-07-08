@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: 2021 Rosa Richter
-
-SPDX-License-Identifier: MIT
--->
-
 # Benchmark
 
 Benchmark run from 2021-10-24 06:47:30.727790Z UTC

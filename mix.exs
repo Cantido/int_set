@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 Rosa Richter
+# SPDX-FileCopyrightText: 2024 Rosa Richter
 #
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 defmodule IntSet.MixProject do
   use Mix.Project
@@ -9,7 +9,7 @@ defmodule IntSet.MixProject do
     [
       name: "IntSet",
       app: :int_set,
-      version: "2.0.0",
+      version: "3.0.0",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       description: "A time- and memory-efficient unordered data structure for positive integers.",
@@ -44,7 +44,7 @@ defmodule IntSet.MixProject do
     [
       files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSES/*"],
       maintainers: ["Rosa Richter"],
-      licenses: ["MIT", "CC-BY-4.0", "CC0-1.0"],
+      licenses: ["AGPL-3.0-or-later", "CC-BY-4.0"],
       links: %{
         "Github" => "https://github.com/Cantido/int_set",
         "Sponsor" => "https://liberapay.com/rosa"

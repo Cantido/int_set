@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2024 Rosa Richter
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+version = 1
+
+[[annotations]]
+path = "benchmarks/results/*"
+SPDX-FileCopyrightText = "2024 Rosa Richter <cosmic.lady.rosa@gmail.com>"
+SPDX-License-Identifier = "CC0-1.0"

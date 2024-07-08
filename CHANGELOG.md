@@ -1,7 +1,7 @@
 <!--
-SPDX-FileCopyrightText: 2021 Rosa Richter
+SPDX-FileCopyrightText: 2024 Rosa Richter
 
-SPDX-License-Identifier: MIT
+SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
 # Changelog
@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+
+- **BREAKING:** This project will be licensed under the AGPL-3.0-or-later license going forward.
 
 ## [2.0.0] - 2023-03-29
 

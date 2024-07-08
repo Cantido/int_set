@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 Rosa Richter
+# SPDX-FileCopyrightText: 2024 Rosa Richter
 #
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 %Doctor.Config{
   exception_moduledoc_required: true,
