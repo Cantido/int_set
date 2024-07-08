@@ -7,6 +7,8 @@ name: Dependency check
 on:
   schedule:
     - cron: "0 0 * * *"
+  push:
+  pull_request:
 
 jobs:
   test-unlocked:
@@ -33,7 +35,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Elixir
-      uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21 # v1.16.0
+      uses: erlef/setup-beam@v1
       with:
         elixir-version: ${{ matrix.elixir-version }}
         otp-version: ${{ matrix.otp-version }}
